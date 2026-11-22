@@ -20,4 +20,4 @@ The project has a knowledge graph at `graphify-out/`.
 
 ## i18n
 
-English is the source language for the settings UI and server messages. Every visible string in `LessclicksSettings.svelte` is bound to `i18n.key || 'English fallback'`; German comes from `languages/lessclicks-analytics-for-matomo-de_DE.po`. Do not add German fallbacks to the settings component.
+English is the source language in PHP and Svelte. Every visible string in `LessclicksSettings.svelte` and `DashboardWidget.svelte` is bound to `i18n.key || 'English fallback'`; German comes from `languages/lessclicks-analytics-for-matomo-de_DE.po`. Do not add German fallbacks to Svelte components.

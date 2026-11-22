@@ -12,6 +12,8 @@ const pluginUrl = wpData.pluginUrl || '';
 const version = wpData.version || '';
 const matomoDetected = wpData.matomoDetected || { installed: false };
 const i18n = wpData.i18n || {};
+// WordPress returns locales like en_US; toLocaleDateString requires en-US.
+const locale = (wpData.locale || 'en-US').replace(/_/g, '-');
 
 // State
 let settings = {
@@ -229,7 +231,7 @@ function formatPreviewLabel(dateStr) {
     if (!dateStr) return '';
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return dateStr;
-    return date.toLocaleDateString(wpData.locale || 'en-US', { day: '2-digit', month: '2-digit' });
+    return date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' });
 }
 
 function safeHex(color) {

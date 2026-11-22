@@ -45,7 +45,7 @@ SVN_URL="https://plugins.svn.wordpress.org/${PLUGIN}"
 SVN_USER="${SVN_USERNAME:-choooomedia}"
 
 VERSION="$(sed -n 's/^[[:space:]]*[*][[:space:]]*Version:[[:space:]]*//p' "$MAIN_PHP" | head -1 | tr -d '\r[:space:]')"
-VERSION="${VERSION:-0.9.3}"
+VERSION="${VERSION:-0.9.4}"
 ZIP="dist/${PLUGIN}-${VERSION}.zip"
 
 if ! command -v svn >/dev/null 2>&1; then

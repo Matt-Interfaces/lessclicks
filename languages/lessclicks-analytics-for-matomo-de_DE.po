@@ -2,7 +2,7 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Lessclicks Analytics for Matomo - Dashboard Widget 0.9.3\n"
+"Project-Id-Version: Lessclicks Analytics for Matomo - Dashboard Widget 0.9.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lessclicks\n"
 "Last-Translator: Christopher Matt\n"
 "Language-Team: Deutsch\n"
@@ -299,109 +299,106 @@ msgstr "Matomo-API-Dokumentation"
 msgid "Support the developer"
 msgstr "Entwickler unterstützen"
 
-msgid "Besuche"
-msgstr "Besuche"
-
-msgid "Seitenaufrufe"
+msgid "Page views"
 msgstr "Seitenaufrufe"
 
-msgid "Besucher"
+msgid "Visitors"
 msgstr "Besucher"
 
-msgid "Absprungrate"
+msgid "Bounce rate"
 msgstr "Absprungrate"
 
-msgid "Ø Verweildauer"
+msgid "Avg. time on site"
 msgstr "Ø Verweildauer"
 
-msgid "Lade Daten..."
+msgid "Loading data..."
 msgstr "Lade Daten…"
 
-msgid "Keine Daten verfügbar"
+msgid "No data available"
 msgstr "Keine Daten verfügbar"
 
-msgid "Fehler beim Laden"
-msgstr "Fehler beim Laden"
+msgid "Could not load data"
+msgstr "Daten konnten nicht geladen werden"
 
-msgid "Bitte konfigurieren Sie das Plugin"
+msgid "Could not load device data"
+msgstr "Gerätedaten konnten nicht geladen werden"
+
+msgid "Please configure the plugin"
 msgstr "Bitte konfigurieren Sie das Plugin"
 
-msgid "OS-Familien"
+msgid "Website"
+msgstr "Website"
+
+msgid "OS families"
 msgstr "OS-Familien"
 
-msgid "Liniendiagramm"
-msgstr "Liniendiagramm"
-
-msgid "Balkendiagramm"
-msgstr "Balkendiagramm"
-
-msgid "Kreisdiagramm"
-msgstr "Kreisdiagramm"
-
-msgid "Von"
+msgid "From"
 msgstr "Von"
 
-msgid "Bis"
+msgid "To"
 msgstr "Bis"
 
-msgid "Farbe ändern"
+msgid "Change color"
 msgstr "Farbe ändern"
 
-msgid "Aktualisieren"
+msgid "Refresh"
 msgstr "Aktualisieren"
 
-msgid "Statistiken aktualisieren"
+msgid "Refresh statistics"
 msgstr "Statistiken aktualisieren"
 
-msgid "Minimieren"
+msgid "Minimize"
 msgstr "Minimieren"
 
-msgid "Ansicht minimieren"
+msgid "Minimize view"
 msgstr "Ansicht minimieren"
 
-msgid "Erweitern"
+msgid "Expand"
 msgstr "Erweitern"
 
-msgid "Erneut versuchen"
+msgid "Try again"
 msgstr "Erneut versuchen"
 
 msgid "Report"
 msgstr "Report"
 
-msgid "PDF Report"
+msgid "PDF report"
 msgstr "PDF-Report"
 
-msgid "Vollständiger Bericht"
+msgid "Full report"
 msgstr "Vollständiger Bericht"
 
-msgid "PNG Bild"
+msgid "PNG image"
 msgstr "PNG-Bild"
 
-msgid "Nur das Diagramm"
+msgid "Chart only"
 msgstr "Nur das Diagramm"
 
-msgid "BESUCHERSTATISTIK"
+msgid "VISITOR STATISTICS"
 msgstr "BESUCHERSTATISTIK"
 
-msgid "Analysezeitraum"
+msgid "Analysis period"
 msgstr "Analysezeitraum"
 
-msgid "Ø Besuche/Tag"
+msgid "Avg. visits/day"
 msgstr "Ø Besuche/Tag"
 
-msgid "Aktionen/Besuch"
+msgid "Actions/visit"
 msgstr "Aktionen/Besuch"
 
-msgid "Bester Tag"
+msgid "Best day"
 msgstr "Bester Tag"
 
-msgid "Tage"
+msgid "days"
 msgstr "Tage"
 
-msgid "ÜBERSICHT"
+msgid "Generating…"
+msgstr "Wird erstellt…"
+
+msgid "OVERVIEW"
 msgstr "ÜBERSICHT"
 
-msgid "DETAILANALYSE"
+msgid "DETAILED ANALYSIS"
 msgstr "DETAILANALYSE"
 
 msgid "ANALYTICS"
@@ -410,7 +407,7 @@ msgstr "ANALYTICS"
 msgid "REPORT"
 msgstr "REPORT"
 
-msgid "Generiert am"
+msgid "Generated on"
 msgstr "Generiert am"
 
 msgid "Powered by Lessclicks"
@@ -419,13 +416,13 @@ msgstr "Powered by Lessclicks"
 msgid "Powered by"
 msgstr "Powered by"
 
-msgid "Fehler beim Erstellen des PDF-Reports"
+msgid "Could not create the PDF report"
 msgstr "Fehler beim Erstellen des PDF-Reports"
 
-msgid "Fehler beim Erstellen des PNG-Bildes"
+msgid "Could not create the PNG image"
 msgstr "Fehler beim Erstellen des PNG-Bildes"
 
-msgid "Chart wird aufbereitet..."
+msgid "Preparing chart..."
 msgstr "Chart wird aufbereitet…"
 
 msgid "Lessclicks is not configured yet."

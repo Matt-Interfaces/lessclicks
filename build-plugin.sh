@@ -10,7 +10,7 @@ echo "===================================="
 
 # Variables
 PLUGIN_NAME="lessclicks-analytics-for-matomo"
-VERSION="0.9.3"
+VERSION="0.9.4"
 BUILD_DIR="./build"
 DIST_DIR="./dist"
 

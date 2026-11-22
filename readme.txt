@@ -4,7 +4,7 @@ Donate link: https://matt-interfaces.ch/zahlen
 Tags: analytics, dashboard, matomo, statistics, widget
 Requires at least: 5.8
 Tested up to: 7.1
-Stable tag: 0.9.3
+Stable tag: 0.9.4
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -103,6 +103,10 @@ Administrators only. The widget is registered for administrators, and the REST e
 5. Dashboard widget with a pie chart and the report export menu for PDF and PNG.
 
 == Changelog ==
+
+= 0.9.4 =
+* Fixed the invalid locale format in the live preview date labels that caused a JavaScript error on the settings page.
+* Restored the English dashboard widget texts; the widget now uses English source strings with a complete German translation.
 
 = 0.9.3 =
 * Settings page translated into English and German; English is the source language.

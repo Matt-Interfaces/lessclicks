@@ -9,7 +9,7 @@ const restUrl = wpData.restUrl || '/wp-json/lessclicks/v1/';
 const nonce = wpData.nonce || '';
 const savedSettings = wpData.settings || {};
 const i18n = wpData.i18n || {};
-const dateLocale = i18n.locale || 'de-DE';
+const dateLocale = i18n.locale || 'en-US';
 const siteTitle = wpData.siteTitle || i18n.website || 'Website';
 const siteUrl = wpData.siteUrl || '';
 const siteLogo = wpData.siteLogo || '';
@@ -96,9 +96,9 @@ function toggleMinimalView() {
 
 // Chart types - titles via i18n
 const chartTypes = [
-    { value: 'line', label: '📈', title: i18n.line || 'Liniendiagramm' },
-    { value: 'bar', label: '📊', title: i18n.bar || 'Balkendiagramm' },
-    { value: 'pie', label: '🥧', title: i18n.pie || 'Kreisdiagramm' }
+    { value: 'line', label: '📈', title: i18n.line || 'Line chart' },
+    { value: 'bar', label: '📊', title: i18n.bar || 'Bar chart' },
+    { value: 'pie', label: '🥧', title: i18n.pie || 'Pie chart' }
 ];
 
 // Aggregierte Statistiken berechnen (reaktiv auf analyticsData)
@@ -162,25 +162,25 @@ $: aggregatedData = (() => {
 })();
 $: stats = aggregatedData ? [
     { 
-        label: i18n.visitors || 'Besucher', 
+        label: i18n.visitors || 'Visitors', 
         value: formatNumber(aggregatedData.nb_uniq_visitors || aggregatedData.nb_visits || 0),
         icon: '👥',
         color: '#3b82f6'
     },
     { 
-        label: i18n.pageviews || 'Seitenaufrufe', 
+        label: i18n.pageviews || 'Page views', 
         value: formatNumber(aggregatedData.nb_pageviews || aggregatedData.nb_actions || 0),
         icon: '📄',
         color: '#10b981'
     },
     { 
-        label: i18n.bounceRate || 'Absprungrate', 
+        label: i18n.bounceRate || 'Bounce rate', 
         value: (aggregatedData.bounce_rate || '0%'),
         icon: '↩️',
         color: '#f59e0b'
     },
     { 
-        label: i18n.avgTime || 'Ø Verweildauer', 
+        label: i18n.avgTime || 'Avg. time on site', 
         value: formatTime(aggregatedData.avg_time_on_site || 0),
         icon: '⏱️',
         color: '#8b5cf6'
@@ -219,7 +219,7 @@ async function loadAnalytics() {
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.message || i18n.error || 'Fehler beim Laden');
+            throw new Error(errorData.message || i18n.error || 'Could not load data');
         }
 
         analyticsData = await response.json();
@@ -249,7 +249,7 @@ async function loadDevices() {
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.message || i18n.deviceError || 'Fehler beim Laden der Gerätedaten');
+            throw new Error(errorData.message || i18n.deviceError || 'Could not load device data');
         }
 
         deviceData = await response.json();
@@ -284,12 +284,12 @@ function createChartInternal() {
     const isPie = chartType === 'pie' || chartType === 'doughnut';
     let labels = [];
     let data = [];
-    let datasetLabel = i18n.visits || 'Besuche';
+    let datasetLabel = i18n.visits || 'Visits';
 
     if (isPie) {
         labels = deviceData.map(d => d.label);
         data = deviceData.map(d => d.value);
-        datasetLabel = i18n.osFamilies || 'OS-Familien';
+        datasetLabel = i18n.osFamilies || 'OS families';
     } else {
         labels = generateDateLabels();
         data = generateDataFromAnalytics();
@@ -383,7 +383,7 @@ function createChartInternal() {
                             if (isPie) {
                                 return `${datasetLabel}: ${value}`;
                             }
-                            return `${i18n.visits || 'Besuche'}: ${value}`;
+                            return `${i18n.visits || 'Visits'}: ${value}`;
                         }
                     }
                 }
@@ -794,7 +794,7 @@ async function generatePdfReport() {
         pdf.setTextColor(100, 116, 139);
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'bold');
-        pdf.text((i18n.overview || 'ÜBERSICHT') + ' • ' + formatDateRange(), margin + 5, yPos - 1);
+        pdf.text((i18n.overview || 'OVERVIEW') + ' • ' + formatDateRange(), margin + 5, yPos - 1);
         yPos += 9;
 
         // Stats in 4er Grid
@@ -842,7 +842,7 @@ async function generatePdfReport() {
         pdf.setTextColor(100, 116, 139);
         pdf.setFontSize(9);
         pdf.setFont('helvetica', 'bold');
-        pdf.text(i18n.statistics || 'BESUCHERSTATISTIK', margin + 5, yPos - 1);
+        pdf.text(i18n.statistics || 'VISITOR STATISTICS', margin + 5, yPos - 1);
         yPos += 10;
 
         // Chart with larger box
@@ -883,14 +883,14 @@ async function generatePdfReport() {
         pdf.setTextColor(100, 116, 139);
         pdf.setFontSize(9);
         pdf.setFont('helvetica', 'bold');
-        pdf.text(i18n.detailAnalysis || 'DETAILANALYSE', margin + 5, yPos - 1);
+        pdf.text(i18n.detailAnalysis || 'DETAILED ANALYSIS', margin + 5, yPos - 1);
         yPos += 10;
 
         const detailItems = [
-            { label: i18n.period || 'Analysezeitraum', value: `${extStats.totalDays || 0} ${i18n.days || 'Tage'}` },
-            { label: i18n.avgPerDay || 'Ø Besuche/Tag', value: (extStats.avgVisitsPerDay || 0).toString() },
-            { label: i18n.actionsPerVisit || 'Aktionen/Besuch', value: (extStats.actionsPerVisit || 0).toString() },
-            { label: i18n.bestDay || 'Bester Tag', value: `${extStats.maxDate || '-'}` }
+            { label: i18n.period || 'Analysis period', value: `${extStats.totalDays || 0} ${i18n.days || 'days'}` },
+            { label: i18n.avgPerDay || 'Avg. visits/day', value: (extStats.avgVisitsPerDay || 0).toString() },
+            { label: i18n.actionsPerVisit || 'Actions/visit', value: (extStats.actionsPerVisit || 0).toString() },
+            { label: i18n.bestDay || 'Best day', value: `${extStats.maxDate || '-'}` }
         ];
 
         const detailCardWidth = (contentWidth - 12) / 4;
@@ -943,7 +943,7 @@ async function generatePdfReport() {
         const generatedAt = new Date().toLocaleDateString(dateLocale, {
             day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
         });
-        const footerLeft = `${i18n.generatedOn || 'Generiert am'} ${generatedAt}`;
+        const footerLeft = `${i18n.generatedOn || 'Generated on'} ${generatedAt}`;
         const footerCenter = i18n.poweredBy || 'Powered by Lessclicks';
 
         pdf.setFontSize(7);
@@ -967,7 +967,7 @@ async function generatePdfReport() {
         
     } catch (err) {
         console.error('PDF error:', err);
-        alert(i18n.pdfError || 'Fehler beim Erstellen des PDF-Reports');
+        alert(i18n.pdfError || 'Could not create the PDF report');
     } finally {
         generatingPdf = false;
     }
@@ -1147,7 +1147,7 @@ async function exportChartAsPng() {
         const pngGeneratedAt = new Date().toLocaleDateString(dateLocale, {
             day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
         });
-        const footerLeftText = `${i18n.generatedOn || 'Generiert am'} ${pngGeneratedAt}`;
+        const footerLeftText = `${i18n.generatedOn || 'Generated on'} ${pngGeneratedAt}`;
         const footerCenterText = i18n.poweredBy || 'Powered by Lessclicks';
 
         ctx.textAlign = 'left';
@@ -1176,7 +1176,7 @@ async function exportChartAsPng() {
         
     } catch (err) {
         console.error('PNG export error:', err);
-        alert(i18n.pngError || 'Fehler beim Erstellen des PNG-Bildes');
+        alert(i18n.pngError || 'Could not create the PNG image');
     }
 }
 
@@ -1268,14 +1268,14 @@ onDestroy(() => {
                     class="dw-btn-refresh"
                     on:click={loadAnalytics}
                     disabled={loading}
-                    title={i18n.refresh || 'Aktualisieren'}
+                    title={i18n.refresh || 'Refresh'}
                 >
                     <span class:dw-spinning={loading}>🔄</span>
                 </button>
                 <button 
                     class="dw-btn-refresh"
                     on:click={toggleMinimalView}
-                    title={i18n.expand || 'Erweitern'}
+                    title={i18n.expand || 'Expand'}
                 >
                     📈
                 </button>
@@ -1285,7 +1285,7 @@ onDestroy(() => {
         <!-- Minimal Chart -->
         <div class="dw-minimal-chart">
             {#if loading}
-                <div class="dw-loader dw-loader-small" role="status" aria-label={i18n.loading || 'Lade Daten...'}>
+                <div class="dw-loader dw-loader-small" role="status" aria-label={i18n.loading || 'Loading data...'}>
                     <div class="dw-loader-spinner"></div>
                 </div>
             {:else if !error}
@@ -1314,7 +1314,7 @@ onDestroy(() => {
                 <div class="dw-chart-loader" role="status" aria-live="polite">
                     <div class="dw-loader">
                         <div class="dw-loader-spinner"></div>
-                        <span>{i18n.loading || 'Lade Daten...'}</span>
+                        <span>{i18n.loading || 'Loading data...'}</span>
                     </div>
                 </div>
             {:else if error}
@@ -1322,7 +1322,7 @@ onDestroy(() => {
                     <span class="dw-error-icon">⚠️</span>
                     <p>{error}</p>
                     <button class="dw-btn dw-btn-primary" on:click={loadAnalytics}>
-                        🔄 {i18n.retry || 'Erneut versuchen'}
+                        🔄 {i18n.retry || 'Try again'}
                     </button>
                 </div>
             {:else}
@@ -1332,7 +1332,7 @@ onDestroy(() => {
                         <div class="dw-chart-refresh-overlay" role="status" aria-live="polite">
                             <div class="dw-loader dw-loader-small">
                                 <div class="dw-loader-spinner"></div>
-                                <span>{i18n.chartPreparing || 'Chart wird aufbereitet...'}</span>
+                                <span>{i18n.chartPreparing || 'Preparing chart...'}</span>
                             </div>
                         </div>
                     {/if}
@@ -1345,7 +1345,7 @@ onDestroy(() => {
             <div class="dw-control-row">
                 <div class="dw-dates">
                     <label class="dw-date-field" for="dw-start-date">
-                        <span class="dw-date-label">{i18n.from || 'Von'}</span>
+                        <span class="dw-date-label">{i18n.from || 'From'}</span>
                         <input 
                             id="dw-start-date"
                             type="date" 
@@ -1353,12 +1353,12 @@ onDestroy(() => {
                             on:change={handleDateChange}
                             class="dw-input-date"
                             disabled={loading}
-                            aria-label={i18n.from || 'Von'}
+                            aria-label={i18n.from || 'From'}
                         />
                     </label>
                     <span class="dw-date-sep">–</span>
                     <label class="dw-date-field" for="dw-end-date">
-                        <span class="dw-date-label">{i18n.to || 'Bis'}</span>
+                        <span class="dw-date-label">{i18n.to || 'To'}</span>
                         <input 
                             id="dw-end-date"
                             type="date" 
@@ -1366,7 +1366,7 @@ onDestroy(() => {
                             on:change={handleDateChange}
                             class="dw-input-date"
                             disabled={loading}
-                            aria-label={i18n.to || 'Bis'}
+                            aria-label={i18n.to || 'To'}
                         />
                     </label>
                 </div>
@@ -1397,7 +1397,7 @@ onDestroy(() => {
                         updateChart();
                     }}
                     class="dw-color-picker"
-                    title={i18n.changeColor || 'Farbe ändern'}
+                    title={i18n.changeColor || 'Change color'}
                     disabled={loading || loadingChartType}
                 />
 
@@ -1405,8 +1405,8 @@ onDestroy(() => {
                     class="dw-btn-refresh"
                     on:click={loadAnalytics}
                     disabled={loading}
-                    title={i18n.refresh || 'Aktualisieren'}
-                    aria-label={i18n.ariaRefresh || 'Statistiken aktualisieren'}
+                    title={i18n.refresh || 'Refresh'}
+                    aria-label={i18n.ariaRefresh || 'Refresh statistics'}
                     type="button"
                 >
                     <span class:dw-spinning={loading}>🔄</span>
@@ -1415,8 +1415,8 @@ onDestroy(() => {
                 <button 
                     class="dw-btn-refresh"
                     on:click={toggleMinimalView}
-                    title={i18n.minimize || 'Minimieren'}
-                    aria-label={i18n.ariaMinimize || 'Ansicht minimieren'}
+                    title={i18n.minimize || 'Minimize'}
+                    aria-label={i18n.ariaMinimize || 'Minimize view'}
                     type="button"
                 >
                     <span>➖</span>
@@ -1430,7 +1430,7 @@ onDestroy(() => {
                         type="button"
                     >
                         {#if generatingPdf}
-                            <span>⏳</span> {i18n.generating || 'Erstelle…'}
+                            <span>⏳</span> {i18n.generating || 'Generating…'}
                         {:else}
                             <span>📥</span> {i18n.report || 'Report'}
                         {/if}
@@ -1441,15 +1441,15 @@ onDestroy(() => {
                             <button class="dw-export-option" on:click={generatePdfReport} type="button">
                                 <span>📄</span>
                                 <div>
-                                    <strong>{i18n.pdfReport || 'PDF Report'}</strong>
-                                    <small>{i18n.fullReport || 'Vollständiger Bericht'}</small>
+                                    <strong>{i18n.pdfReport || 'PDF report'}</strong>
+                                    <small>{i18n.fullReport || 'Full report'}</small>
                                 </div>
                             </button>
                             <button class="dw-export-option" on:click={exportChartAsPng} type="button">
                                 <span>🖼️</span>
                                 <div>
-                                    <strong>{i18n.pngImage || 'PNG Bild'}</strong>
-                                    <small>{i18n.chartOnly || 'Nur das Diagramm'}</small>
+                                    <strong>{i18n.pngImage || 'PNG image'}</strong>
+                                    <small>{i18n.chartOnly || 'Chart only'}</small>
                                 </div>
                             </button>
                         </div>
@@ -1461,7 +1461,7 @@ onDestroy(() => {
         <!-- Footer -->
         <div class="dw-footer">
             <a href="admin.php?page=lessclicks" class="dw-settings-link">
-                ⚙️ {i18n.settings || 'Einstellungen'}
+                ⚙️ {i18n.settings || 'Settings'}
             </a>
             <span class="dw-powered">
                 {i18n.poweredByCompany || 'Powered by'} <strong>Matt Interfaces</strong>

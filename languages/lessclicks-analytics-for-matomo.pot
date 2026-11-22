@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Lessclicks Analytics for Matomo - Dashboard Widget 0.9.3\n"
+"Project-Id-Version: Lessclicks Analytics for Matomo - Dashboard Widget 0.9.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lessclicks\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-22T08:15:09+00:00\n"
+"POT-Creation-Date: 2026-11-22T09:13:59+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: lessclicks-analytics-for-matomo\n"
@@ -36,6 +36,7 @@ msgstr ""
 
 #: includes/class-lessclicks.php:118
 #: includes/class-lessclicks.php:192
+#: includes/class-lessclicks.php:365
 msgid "Settings"
 msgstr ""
 
@@ -52,7 +53,7 @@ msgid "Matomo widget dashboard for WordPress"
 msgstr ""
 
 #: includes/class-lessclicks.php:179
-#: includes/class-lessclicks.php:595
+#: includes/class-lessclicks.php:600
 msgid "Settings saved."
 msgstr ""
 
@@ -69,19 +70,22 @@ msgid "Connection failed."
 msgstr ""
 
 #: includes/class-lessclicks.php:183
-#: includes/class-lessclicks.php:1100
+#: includes/class-lessclicks.php:1105
 msgid "Token detected automatically."
 msgstr ""
 
 #: includes/class-lessclicks.php:184
+#: includes/class-lessclicks.php:341
 msgid "Line chart"
 msgstr ""
 
 #: includes/class-lessclicks.php:185
+#: includes/class-lessclicks.php:342
 msgid "Bar chart"
 msgstr ""
 
 #: includes/class-lessclicks.php:186
+#: includes/class-lessclicks.php:343
 msgid "Pie chart"
 msgstr ""
 
@@ -262,7 +266,7 @@ msgid "Token detection failed."
 msgstr ""
 
 #: includes/class-lessclicks.php:232
-#: includes/class-lessclicks.php:1087
+#: includes/class-lessclicks.php:1092
 msgid "Matomo for WordPress is not installed."
 msgstr ""
 
@@ -271,6 +275,7 @@ msgid "Could not load the preview."
 msgstr ""
 
 #: includes/class-lessclicks.php:234
+#: includes/class-lessclicks.php:329
 msgid "Visits"
 msgstr ""
 
@@ -398,226 +403,222 @@ msgstr ""
 msgid "Support the developer"
 msgstr ""
 
-#: includes/class-lessclicks.php:328
-msgid "Besuche"
-msgstr ""
-
-#: includes/class-lessclicks.php:329
-msgid "Seitenaufrufe"
-msgstr ""
-
 #: includes/class-lessclicks.php:330
-msgid "Besucher"
+msgid "Page views"
 msgstr ""
 
 #: includes/class-lessclicks.php:331
-msgid "Absprungrate"
+msgid "Visitors"
 msgstr ""
 
 #: includes/class-lessclicks.php:332
-msgid "Ø Verweildauer"
+msgid "Bounce rate"
 msgstr ""
 
 #: includes/class-lessclicks.php:333
-msgid "Lade Daten..."
+msgid "Avg. time on site"
 msgstr ""
 
 #: includes/class-lessclicks.php:334
-msgid "Keine Daten verfügbar"
+msgid "Loading data..."
 msgstr ""
 
 #: includes/class-lessclicks.php:335
-msgid "Fehler beim Laden"
+msgid "No data available"
 msgstr ""
 
 #: includes/class-lessclicks.php:336
-msgid "Bitte konfigurieren Sie das Plugin"
+msgid "Could not load data"
 msgstr ""
 
 #: includes/class-lessclicks.php:337
-msgid "OS-Familien"
+msgid "Could not load device data"
 msgstr ""
 
 #: includes/class-lessclicks.php:338
-msgid "Liniendiagramm"
+msgid "Please configure the plugin"
 msgstr ""
 
 #: includes/class-lessclicks.php:339
-msgid "Balkendiagramm"
+msgid "Website"
 msgstr ""
 
 #: includes/class-lessclicks.php:340
-msgid "Kreisdiagramm"
-msgstr ""
-
-#: includes/class-lessclicks.php:341
-msgid "Von"
-msgstr ""
-
-#: includes/class-lessclicks.php:342
-msgid "Bis"
-msgstr ""
-
-#: includes/class-lessclicks.php:343
-msgid "Farbe ändern"
+msgid "OS families"
 msgstr ""
 
 #: includes/class-lessclicks.php:344
-msgid "Aktualisieren"
+msgid "From"
 msgstr ""
 
 #: includes/class-lessclicks.php:345
-msgid "Statistiken aktualisieren"
+msgid "To"
 msgstr ""
 
 #: includes/class-lessclicks.php:346
-msgid "Minimieren"
+msgid "Change color"
 msgstr ""
 
 #: includes/class-lessclicks.php:347
-msgid "Ansicht minimieren"
+msgid "Refresh"
 msgstr ""
 
 #: includes/class-lessclicks.php:348
-msgid "Erweitern"
+msgid "Refresh statistics"
 msgstr ""
 
 #: includes/class-lessclicks.php:349
-msgid "Erneut versuchen"
+msgid "Minimize"
 msgstr ""
 
 #: includes/class-lessclicks.php:350
-msgid "Report"
+msgid "Minimize view"
 msgstr ""
 
 #: includes/class-lessclicks.php:351
-msgid "PDF Report"
+msgid "Expand"
 msgstr ""
 
 #: includes/class-lessclicks.php:352
-msgid "Vollständiger Bericht"
+msgid "Try again"
 msgstr ""
 
 #: includes/class-lessclicks.php:353
-msgid "PNG Bild"
+msgid "Report"
 msgstr ""
 
 #: includes/class-lessclicks.php:354
-msgid "Nur das Diagramm"
+msgid "PDF report"
 msgstr ""
 
 #: includes/class-lessclicks.php:355
-msgid "BESUCHERSTATISTIK"
+msgid "Full report"
 msgstr ""
 
 #: includes/class-lessclicks.php:356
-msgid "Analysezeitraum"
+msgid "PNG image"
 msgstr ""
 
 #: includes/class-lessclicks.php:357
-msgid "Ø Besuche/Tag"
+msgid "Chart only"
 msgstr ""
 
 #: includes/class-lessclicks.php:358
-msgid "Aktionen/Besuch"
+msgid "VISITOR STATISTICS"
 msgstr ""
 
 #: includes/class-lessclicks.php:359
-msgid "Bester Tag"
+msgid "Analysis period"
 msgstr ""
 
 #: includes/class-lessclicks.php:360
-msgid "Tage"
+msgid "Avg. visits/day"
 msgstr ""
 
 #: includes/class-lessclicks.php:361
-msgid "ÜBERSICHT"
+msgid "Actions/visit"
 msgstr ""
 
 #: includes/class-lessclicks.php:362
-msgid "DETAILANALYSE"
+msgid "Best day"
 msgstr ""
 
 #: includes/class-lessclicks.php:363
-msgid "ANALYTICS"
+msgid "days"
 msgstr ""
 
 #: includes/class-lessclicks.php:364
-msgid "REPORT"
-msgstr ""
-
-#: includes/class-lessclicks.php:365
-msgid "Generiert am"
+msgid "Generating…"
 msgstr ""
 
 #: includes/class-lessclicks.php:366
-msgid "Powered by Lessclicks"
+msgid "OVERVIEW"
 msgstr ""
 
 #: includes/class-lessclicks.php:367
-msgid "Powered by"
+msgid "DETAILED ANALYSIS"
 msgstr ""
 
 #: includes/class-lessclicks.php:368
-msgid "Fehler beim Erstellen des PDF-Reports"
+msgid "ANALYTICS"
 msgstr ""
 
 #: includes/class-lessclicks.php:369
-msgid "Fehler beim Erstellen des PNG-Bildes"
+msgid "REPORT"
 msgstr ""
 
 #: includes/class-lessclicks.php:370
-msgid "Chart wird aufbereitet..."
+msgid "Generated on"
 msgstr ""
 
-#: includes/class-lessclicks.php:615
-#: includes/class-lessclicks.php:800
+#: includes/class-lessclicks.php:371
+msgid "Powered by Lessclicks"
+msgstr ""
+
+#: includes/class-lessclicks.php:372
+msgid "Powered by"
+msgstr ""
+
+#: includes/class-lessclicks.php:373
+msgid "Could not create the PDF report"
+msgstr ""
+
+#: includes/class-lessclicks.php:374
+msgid "Could not create the PNG image"
+msgstr ""
+
+#: includes/class-lessclicks.php:375
+msgid "Preparing chart..."
+msgstr ""
+
+#: includes/class-lessclicks.php:620
+#: includes/class-lessclicks.php:805
 msgid "Lessclicks is not configured yet."
 msgstr ""
 
-#: includes/class-lessclicks.php:701
-#: includes/class-lessclicks.php:869
+#: includes/class-lessclicks.php:706
+#: includes/class-lessclicks.php:874
 msgid "No Matomo Site ID found."
 msgstr ""
 
-#: includes/class-lessclicks.php:781
-#: includes/class-lessclicks.php:896
+#: includes/class-lessclicks.php:786
+#: includes/class-lessclicks.php:901
 msgid "Matomo for WordPress is not configured correctly."
 msgstr ""
 
-#: includes/class-lessclicks.php:994
+#: includes/class-lessclicks.php:999
 msgid "Connected to Matomo for WordPress."
 msgstr ""
 
-#: includes/class-lessclicks.php:1011
+#: includes/class-lessclicks.php:1016
 msgid "URL and token are required."
 msgstr ""
 
 #. translators: %s: Matomo version number
-#: includes/class-lessclicks.php:1059
+#: includes/class-lessclicks.php:1064
 msgid "Connected to Matomo %s"
 msgstr ""
 
-#: includes/class-lessclicks.php:1068
+#: includes/class-lessclicks.php:1073
 msgid "Unknown response from Matomo."
 msgstr ""
 
-#: includes/class-lessclicks.php:1113
+#: includes/class-lessclicks.php:1118
 msgid "Use the Matomo REST API without a token."
 msgstr ""
 
-#: includes/class-lessclicks.php:1124
+#: includes/class-lessclicks.php:1129
 msgid "The token could not be detected automatically."
 msgstr ""
 
-#: includes/class-lessclicks.php:1139
+#: includes/class-lessclicks.php:1144
 msgid "Lessclicks - Website statistics"
 msgstr ""
 
-#: includes/class-lessclicks.php:1157
+#: includes/class-lessclicks.php:1162
 msgid "Welcome to Lessclicks. Please configure the plugin."
 msgstr ""
 
-#: includes/class-lessclicks.php:1159
+#: includes/class-lessclicks.php:1164
 msgid "Set up now"
 msgstr ""

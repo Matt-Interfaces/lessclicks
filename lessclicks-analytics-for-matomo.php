@@ -3,7 +3,7 @@
  * Plugin Name: Lessclicks Analytics for Matomo - Dashboard Widget
  * Plugin URI: https://matt-interfaces.ch/lessclicks
  * Description: View Matomo Analytics data directly in your WordPress dashboard. Simple integration, data-driven decisions.
- * Version: 0.9.3
+ * Version: 0.9.4
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author: Christopher Matt
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin constants
-define( 'LESSCLICKS_VERSION', '0.9.3' );
+define( 'LESSCLICKS_VERSION', '0.9.4' );
 define( 'LESSCLICKS_PLUGIN_FILE', __FILE__ );
 define( 'LESSCLICKS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'LESSCLICKS_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
