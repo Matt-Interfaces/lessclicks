@@ -1,7 +1,7 @@
 /**
- * Dashlytics Admin Scripts
+ * Lessclicks Admin Scripts
  *
- * @package Dashlytics
+ * @package Lessclicks
  */
 
 (function ($) {
@@ -9,13 +9,13 @@
 
 	$(
 		function () {
-			$( '.dashlytics-review-notice' ).on(
+			$( '.lessclicks-review-notice' ).on(
 				'click',
 				'.notice-dismiss',
 				function (event) {
 					event.preventDefault();
 
-					var $notice = $( this ).closest( '.dashlytics-review-notice' );
+					var $notice = $( this ).closest( '.lessclicks-review-notice' );
 
 					$notice.fadeOut(
 						200,
@@ -24,15 +24,15 @@
 						}
 					);
 
-					if (typeof dashlyticsAdminData === 'undefined' || ! dashlyticsAdminData.ajaxUrl) {
+					if (typeof lessclicksAdminData === 'undefined' || ! lessclicksAdminData.ajaxUrl) {
 						return;
 					}
 
 					$.post(
-						dashlyticsAdminData.ajaxUrl,
+						lessclicksAdminData.ajaxUrl,
 						{
-							action: 'dashlytics_review_snooze',
-							nonce: dashlyticsAdminData.nonce
+							action: 'lessclicks_review_snooze',
+							nonce: lessclicksAdminData.nonce
 						}
 					);
 				}

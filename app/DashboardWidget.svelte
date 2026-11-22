@@ -4,8 +4,8 @@ import { jsPDF } from 'jspdf';
 import { onMount, onDestroy, afterUpdate } from 'svelte';
 
 // WordPress data
-const wpData = window.dashlyticsWidget || {};
-const restUrl = wpData.restUrl || '/wp-json/dashlytics/v1/';
+const wpData = window.lessclicksWidget || {};
+const restUrl = wpData.restUrl || '/wp-json/lessclicks/v1/';
 const nonce = wpData.nonce || '';
 const savedSettings = wpData.settings || {};
 const i18n = wpData.i18n || {};
@@ -29,8 +29,8 @@ let needsChartUpdate = false;
 let isMinimalView = false;
 
 // LocalStorage Keys
-const STORAGE_KEY = 'dashlytics_minimal_view';
-const WIDGET_SETTINGS_KEY = 'dashlytics_widget_settings';
+const STORAGE_KEY = 'lessclicks_minimal_view';
+const WIDGET_SETTINGS_KEY = 'lessclicks_widget_settings';
 
 // Restore widget settings from localStorage
 function loadWidgetSettings() {
@@ -944,7 +944,7 @@ async function generatePdfReport() {
             day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
         });
         const footerLeft = `${i18n.generatedOn || 'Generiert am'} ${generatedAt}`;
-        const footerCenter = i18n.poweredBy || 'Powered by Dashlytics';
+        const footerCenter = i18n.poweredBy || 'Powered by Lessclicks';
 
         pdf.setFontSize(7);
         pdf.setFont('helvetica', 'normal');
@@ -1148,7 +1148,7 @@ async function exportChartAsPng() {
             day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
         });
         const footerLeftText = `${i18n.generatedOn || 'Generiert am'} ${pngGeneratedAt}`;
-        const footerCenterText = i18n.poweredBy || 'Powered by Dashlytics';
+        const footerCenterText = i18n.poweredBy || 'Powered by Lessclicks';
 
         ctx.textAlign = 'left';
         ctx.textBaseline = 'alphabetic';
@@ -1460,7 +1460,7 @@ onDestroy(() => {
 
         <!-- Footer -->
         <div class="dw-footer">
-            <a href="admin.php?page=dashlytics" class="dw-settings-link">
+            <a href="admin.php?page=lessclicks" class="dw-settings-link">
                 ⚙️ {i18n.settings || 'Einstellungen'}
             </a>
             <span class="dw-powered">

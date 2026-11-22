@@ -1,25 +1,25 @@
-# Dashlytics — WordPress.org Deployment Guide
+# Lessclicks — WordPress.org Deployment Guide
 
-This document describes how to move Dashlytics from GitHub Releases to the WordPress.org plugin directory.
+This document describes how to move Lessclicks from GitHub Releases to the WordPress.org plugin directory.
 
 Until WP.org approval is granted, the plugin uses **GitHub Releases + Plugin Update Checker (PUC)** for WordPress-native updates.
 
 ---
 
-## 1. Current Status (v0.8.8)
+## 1. Current Status (v0.9.0)
 
 | Element | Status | Note |
 |---|---|---|
-| Plugin version synchronized | ✅ Done | `0.8.8` in `dashlytics-matomo.php`, `build-plugin.sh`, `readme.txt` |
-| ZIP build | ✅ Done | `dist/dashlytics-matomo-analytics-widget-0.8.8.zip` |
-| Update mechanism | ✅ Done | PUC v5 vendored, GitHub `Matt-Interfaces/wp-dashlytics` |
-| Translation files | ✅ Done | `.pot` template + `de_DE` and `en_US` `.po/.mo` |
+| Plugin version synchronized | ✅ Done | `0.9.0` in `lessclicks-analytics-for-matomo.php`, `build-plugin.sh`, `readme.txt` |
+| ZIP build | ✅ Done | `dist/lessclicks-analytics-for-matomo-0.9.0.zip` |
+| Update mechanism | ✅ Done | PUC v5 vendored, GitHub `Matt-Interfaces/lessclicks` |
+| Translation files | ✅ Done | `.pot` template + German `de_DE` `.po/.mo` |
 | PHPCS / WPCS | ✅ Done | Clean run, PUC excluded from linting |
 | Automated GitHub release workflow | ✅ Done | `.github/workflows/release.yml` builds and attaches ZIP on tag push |
 | Plugin icons | ✅ Done | `icon-128x128.png`, `icon-256x256.png` in `.wordpress-org/` |
 | Plugin banners | ✅ Done | `banner-772x250.png`, `banner-1544x500.png` in `.wordpress-org/` |
-| Social / OG image | ✅ Done | `dashlytics-og-1200x630.png` in `assets/images/` |
-| Custom admin menu icon | ✅ Done | `dashlytics-icon.svg` in `assets/images/` |
+| Social / OG image | ✅ Done | `lessclicks-og-1200x630.png` in `assets/images/` |
+| Custom admin menu icon | ✅ Done | `lessclicks-icon.svg` in `assets/images/` |
 | WordPress.org submission | ⏳ Open | Requires SVN repo, review, approval |
 
 ---
@@ -29,13 +29,13 @@ Until WP.org approval is granted, the plugin uses **GitHub Releases + Plugin Upd
 Pushing a Git tag `vX.Y.Z` triggers `.github/workflows/release.yml`:
 
 1. Runs PHPCS and the Svelte build.
-2. Executes `build-plugin.sh` to create `dist/dashlytics-matomo-analytics-widget-X.Y.Z.zip`.
+2. Executes `build-plugin.sh` to create `dist/lessclicks-analytics-for-matomo-X.Y.Z.zip`.
 3. Creates a GitHub Release and attaches the ZIP automatically.
 
 Local release commands:
 
 ```bash
-# 1. Bump version in dashlytics-matomo.php, build-plugin.sh and readme.txt
+# 1. Bump version in lessclicks-analytics-for-matomo.php, build-plugin.sh and readme.txt
 # 2. Run quality gates
 composer run phpcs
 cd app && npm run build && cd ..
@@ -49,7 +49,7 @@ git push origin main
 git push origin refs/tags/v0.8.9
 ```
 
-The Plugin Update Checker in installed plugins checks `https://github.com/Matt-Interfaces/wp-dashlytics/releases/latest` and shows a native WordPress update notification when a newer release exists.
+The Plugin Update Checker in installed plugins checks `https://github.com/Matt-Interfaces/lessclicks/releases/latest` and shows a native WordPress update notification when a newer release exists.
 
 ---
 
@@ -72,10 +72,11 @@ Remaining tasks before WP.org submission:
 
 ## 4. Internationalization
 
-- Use text domain `dashlytics-matomo-analytics-widget` consistently.
-- Update `languages/dashlytics-matomo-analytics-widget.pot` before every release.
-- Maintain `dashlytics-matomo-analytics-widget-de_DE.po/mo` and `dashlytics-matomo-analytics-widget-en_US.po/mo`.
-- For additional languages, add `dashlytics-matomo-analytics-widget-{locale}.po/mo` files and register them in `build-plugin.sh`.
+- Use text domain `lessclicks-analytics-for-matomo` consistently.
+- English is the source language; source strings in PHP stay English.
+- Update `languages/lessclicks-analytics-for-matomo.pot` before every release.
+- Maintain `lessclicks-analytics-for-matomo-de_DE.po/mo`; no `en_US` catalog is needed.
+- For additional languages, add `lessclicks-analytics-for-matomo-{locale}.po/mo` files and register them in `build-plugin.sh`.
 
 ---
 
@@ -95,7 +96,7 @@ Remaining tasks before WP.org submission:
 | `.wordpress-org/icon-*.png` | `assets/icon-*.png` | Plugin page icon |
 | `.wordpress-org/banner-*.png` | `assets/banner-*.png` | Plugin page header banner |
 | `assets/screenshot-*.png` | `assets/screenshot-*.png` | Plugin page screenshots |
-| `dist/dashlytics-matomo-analytics-widget-X.Y.Z.zip` contents | `trunk/` + `tags/X.Y.Z/` | The plugin itself |
+| `dist/lessclicks-analytics-for-matomo-X.Y.Z.zip` contents | `trunk/` + `tags/X.Y.Z/` | The plugin itself |
 
 ---
 
@@ -111,8 +112,8 @@ Before submitting at https://wordpress.org/plugins/developers/add/, confirm the 
 
 ### Naming and ownership
 
-- **Plugin name:** Dashlytics - Matomo Analytics Widget
-- The name includes the project/brand identifier "Dashlytics" and is distinctive.
+- **Plugin name:** Lessclicks Analytics for Matomo
+- The name includes the project/brand identifier "Lessclicks" and is distinctive.
 - It does not imply ownership of "Matomo"; it describes an integration with Matomo.
 - The WordPress.org account submitting the plugin must accurately represent the plugin owner.
 
@@ -122,20 +123,20 @@ Before submitting at https://wordpress.org/plugins/developers/add/, confirm the 
 
 ### Not accepted plugin categories — compliance audit
 
-Dashlytics does **not** fall into any of these categories. Code audit result:
+Lessclicks does **not** fall into any of these categories. Code audit result:
 
-| Rejection category | Dashlytics behavior | Compliant |
+| Rejection category | Lessclicks behavior | Compliant |
 |---|---|---|
 | Arbitrary PHP/JS code execution, file managers, AI code execution | No `eval()`, `exec()`, `shell_exec()`, `assert()`, `create_function()`, `file_put_contents()`, `base64_decode()`, or unserialize of user input. No code editors, file managers, or AI code generators. | ✅ |
 | Downloading executable code from external sources | The plugin only fetches JSON analytics data from the user-configured Matomo API endpoint via `wp_remote_get()`. No executable code, binaries, or remote scripts are downloaded or executed. | ✅ |
-| Functionality already well represented without differentiation | Dashlytics focuses specifically on displaying Matomo metrics inside the WordPress dashboard with privacy-first, self-hosted data. This is a differentiated use case compared to general analytics plugins. | ✅ |
+| Functionality already well represented without differentiation | Lessclicks focuses specifically on displaying Matomo metrics inside the WordPress dashboard with privacy-first, self-hosted data. This is a differentiated use case compared to general analytics plugins. | ✅ |
 
 ### Additional Information field
 
 Copy and paste the following text into the submission form:
 
 ```
-Dashlytics is a lightweight dashboard widget that displays Matomo Analytics data directly inside the WordPress admin. It connects to a user-provided Matomo instance (self-hosted, Matomo Cloud, or the Matomo for WordPress plugin) via the official Matomo Reporting API, proxies requests server-side, and renders charts and metrics without adding frontend tracking code. The plugin does not execute arbitrary code, download external executables, or artificially restrict functionality. All REST endpoints use WordPress nonces and manage_options capability checks.
+Lessclicks is a lightweight dashboard widget that displays Matomo Analytics data directly inside the WordPress admin. It connects to a user-provided Matomo instance (self-hosted, Matomo Cloud, or the Matomo for WordPress plugin) via the official Matomo Reporting API, proxies requests server-side, and renders charts and metrics without adding frontend tracking code. The plugin does not execute arbitrary code, download external executables, or artificially restrict functionality. All REST endpoints use WordPress nonces and manage_options capability checks.
 ```
 
 
@@ -151,12 +152,12 @@ Dashlytics is a lightweight dashboard widget that displays Matomo Analytics data
   - Unescaped output
   - Unsanitized input
   - Missing nonces on form processing
-- Dashlytics uses WordPress nonces, capability checks, and sanitization/escaping throughout.
+- Lessclicks uses WordPress nonces, capability checks, and sanitization/escaping throughout.
 
 ### Plugin URL / slug
 
-- The plugin URL will be derived from the `Plugin Name` header in `dashlytics-matomo.php`.
-- Assigned slug: `dashlytics-matomo-analytics-widget`.
+- The plugin URL will be derived from the `Plugin Name` header in `lessclicks-analytics-for-matomo.php`.
+- Assigned slug: `lessclicks-analytics-for-matomo`.
 - The slug can be changed **once** before the review begins.
 - The display name can be updated later; the slug cannot be renamed after approval.
 
@@ -173,7 +174,7 @@ Dashlytics is a lightweight dashboard widget that displays Matomo Analytics data
 ### Step 1: Submit the plugin for review
 
 1. Go to https://wordpress.org/plugins/developers/add/
-2. Upload `dist/dashlytics-matomo-analytics-widget-0.8.8.zip` (maximum file size: 10 MB).
+2. Upload `dist/lessclicks-analytics-for-matomo-0.9.0.zip` (maximum file size: 10 MB).
 3. Confirm all checkboxes in the submission form.
 4. Add any additional information that helps the review team.
 5. Submit and wait for approval (typically a few days to a few weeks).
@@ -183,7 +184,7 @@ Dashlytics is a lightweight dashboard widget that displays Matomo Analytics data
 Once approved, WordPress.org creates an empty SVN repo at:
 
 ```
-https://plugins.svn.wordpress.org/dashlytics-matomo-analytics-widget
+https://plugins.svn.wordpress.org/lessclicks-analytics-for-matomo
 ```
 
 Check it out locally:
@@ -191,8 +192,8 @@ Check it out locally:
 ```bash
 mkdir -p ~/wp-org-svn
 cd ~/wp-org-svn
-svn co https://plugins.svn.wordpress.org/dashlytics-matomo-analytics-widget
-cd dashlytics-matomo-analytics-widget
+svn co https://plugins.svn.wordpress.org/lessclicks-analytics-for-matomo
+cd lessclicks-analytics-for-matomo
 ```
 
 You will see three default folders: `assets/`, `tags/`, `trunk/`.
@@ -202,34 +203,34 @@ You will see three default folders: `assets/`, `tags/`, `trunk/`.
 Build the plugin first, then copy the contents of the build directory (not the ZIP):
 
 ```bash
-cd /Users/chooom/dev/wp-dashlytics
+cd /Users/chooom/dev/lessclicks
 bash build-plugin.sh
 
 # Copy plugin files into SVN trunk
-rsync -av --delete dist/dashlytics-matomo-analytics-widget/ ~/wp-org-svn/dashlytics-matomo-analytics-widget/trunk/
+rsync -av --delete dist/lessclicks-analytics-for-matomo/ ~/wp-org-svn/lessclicks-analytics-for-matomo/trunk/
 ```
 
 ### Step 4: Copy image assets into SVN `assets/`
 
 ```bash
-rsync -av .wordpress-org/ ~/wp-org-svn/dashlytics-matomo-analytics-widget/assets/
-rsync -av assets/screenshot-*.png ~/wp-org-svn/dashlytics-matomo-analytics-widget/assets/
+rsync -av .wordpress-org/ ~/wp-org-svn/lessclicks-analytics-for-matomo/assets/
+rsync -av assets/screenshot-*.png ~/wp-org-svn/lessclicks-analytics-for-matomo/assets/
 ```
 
 ### Step 5: Create a version tag
 
 ```bash
-cd ~/wp-org-svn/dashlytics-matomo-analytics-widget
-svn cp trunk tags/0.8.8
+cd ~/wp-org-svn/lessclicks-analytics-for-matomo
+svn cp trunk tags/0.9.0
 ```
 
 ### Step 6: Review and commit
 
 ```bash
-cd ~/wp-org-svn/dashlytics-matomo-analytics-widget
+cd ~/wp-org-svn/lessclicks-analytics-for-matomo
 svn status
 svn add --force .
-svn ci -m "Initial release 0.8.8"
+svn ci -m "Initial release 0.9.0"
 ```
 
 ### Step 7: Set the stable tag
@@ -237,7 +238,7 @@ svn ci -m "Initial release 0.8.8"
 In `trunk/readme.txt`, ensure the header contains:
 
 ```
-Stable tag: 0.8.8
+Stable tag: 0.9.0
 ```
 
 The `Stable tag` tells WordPress.org which tagged version users should download.
@@ -250,18 +251,18 @@ After the initial release, each new version follows this flow:
 
 ```bash
 # 1. Build locally
-cd /Users/chooom/dev/wp-dashlytics
+cd /Users/chooom/dev/lessclicks
 composer run phpcs
 cd app && npm run build && cd ..
 bash build-plugin.sh
 
 # 2. Sync to SVN trunk
-cd ~/wp-org-svn/dashlytics-matomo-analytics-widget
+cd ~/wp-org-svn/lessclicks-analytics-for-matomo
 svn up
-rsync -av --delete /Users/chooom/dev/wp-dashlytics/dist/dashlytics-matomo-analytics-widget/ trunk/
+rsync -av --delete /Users/chooom/dev/lessclicks/dist/lessclicks-analytics-for-matomo/ trunk/
 
 # 3. Sync assets if they changed
-rsync -av /Users/chooom/dev/wp-dashlytics/.wordpress-org/ assets/
+rsync -av /Users/chooom/dev/lessclicks/.wordpress-org/ assets/
 
 # 4. Create a new tag (replace X.Y.Z)
 VERSION="0.8.9"
@@ -281,7 +282,7 @@ svn ci -m "Release ${VERSION}"
 
 The Plugin Update Checker has been removed from the distribution package for the WordPress.org submission:
 
-1. PUC initialization removed from `dashlytics-matomo.php`.
+1. PUC initialization removed from `lessclicks-analytics-for-matomo.php`.
 2. `build-plugin.sh` no longer copies `includes/plugin-update-checker/` into the ZIP.
 3. The vendored directory remains in the repository for historical reference but is excluded from WP.org builds.
 
@@ -304,8 +305,8 @@ After WP.org approval, updates are delivered through the official WordPress.org 
 
 1. [ ] Verify the plugin on a clean WordPress test site.
 2. [ ] Submit the plugin at https://wordpress.org/plugins/developers/add/
-3. [x] The plugin slug `dashlytics-matomo-analytics-widget` matches the Text Domain.
-4. [ ] After approval, deploy version `0.8.8` to SVN as described in Section 6.
+3. [x] The plugin slug `lessclicks-analytics-for-matomo` matches the Text Domain.
+4. [ ] After approval, deploy version `0.9.0` to SVN as described in Section 6.
 
 ---
-*Document updated 2026-09-24 for Dashlytics v0.8.8.*
+*Document updated 2026-11-18 for Lessclicks v0.9.0.*

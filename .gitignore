@@ -28,6 +28,11 @@ public/
 # macOS / IDE
 .DS_Store
 
+# Local secrets (SVN credentials for the WordPress.org deployment)
+.env
+.env.*
+!.env.example
+
 # Dependency directories
 vendor/
 app/node_modules/
@@ -37,6 +42,9 @@ composer.lock
 build/
 dist/
 app/public/build/
+
+# Graphify knowledge graph output
+graphify-out/
 
 # Divi 5 landing page content is not part of this plugin repository
 # (hosted separately for matt-interfaces.ch).

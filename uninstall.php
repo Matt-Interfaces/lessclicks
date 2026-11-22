@@ -1,11 +1,11 @@
 <?php
 /**
- * Dashlytics Uninstall
+ * Lessclicks Uninstall
  *
  * Runs when the plugin is uninstalled.
  * Removes all plugin data from the database.
  *
- * @package Dashlytics
+ * @package Lessclicks
  * @since 1.0.0
  */
 
@@ -15,9 +15,12 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 // Delete plugin options
+delete_option( 'lessclicks_settings' );
+delete_option( 'lessclicks_review_dismissed' );
+delete_option( 'lessclicks_review_next' );
+
+// Settings stored under the previous plugin name (Dashlytics).
 delete_option( 'dashlytics_settings' );
-delete_option( 'dashlytics_review_dismissed' );
-delete_option( 'dashlytics_review_next' );
 
 // Delete legacy options from version 0.3 if present
 delete_option( 'tokenauth' );
@@ -25,21 +28,22 @@ delete_option( 'apiurl' );
 delete_option( 'siteidarl' );
 
 // Remove capabilities
-$dashlytics_role = get_role( 'administrator' );
-if ( $dashlytics_role ) {
-	$dashlytics_role->remove_cap( 'manage_dashlytics' );
+$lessclicks_role = get_role( 'administrator' );
+if ( $lessclicks_role ) {
+	$lessclicks_role->remove_cap( 'manage_lessclicks' );
 }
 
 // Delete transients if present
-delete_transient( 'dashlytics_analytics_cache' );
+delete_transient( 'lessclicks_analytics_cache' );
 
 // Multisite support
 if ( is_multisite() ) {
-	$dashlytics_blog_ids = get_sites( array( 'fields' => 'ids' ) );
+	$lessclicks_blog_ids = get_sites( array( 'fields' => 'ids' ) );
 
-	foreach ( $dashlytics_blog_ids as $dashlytics_blog_id ) {
-		switch_to_blog( $dashlytics_blog_id );
+	foreach ( $lessclicks_blog_ids as $lessclicks_blog_id ) {
+		switch_to_blog( $lessclicks_blog_id );
 
+		delete_option( 'lessclicks_settings' );
 		delete_option( 'dashlytics_settings' );
 		delete_option( 'tokenauth' );
 		delete_option( 'apiurl' );

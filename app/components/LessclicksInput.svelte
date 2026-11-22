@@ -10,8 +10,8 @@
     export let classes = '';
 
     $: inputClasses = [
-        'dashlytics-input',
-        compact && 'dashlytics-input--compact',
+        'lessclicks-input',
+        compact && 'lessclicks-input--compact',
         classes
     ].filter(Boolean).join(' ');
 </script>

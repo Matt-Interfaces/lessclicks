@@ -1,0 +1,40 @@
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Lessclicks Analytics for Matomo",
+  "alternateName": "Lessclicks",
+  "description": "Free, open-source WordPress plugin that shows Matomo Analytics data in a dashboard widget inside the WordPress admin. Works with Matomo for WordPress, self-hosted Matomo and Matomo Cloud.",
+  "applicationCategory": "BusinessApplication",
+  "applicationSubCategory": "WordPress plugin",
+  "operatingSystem": "WordPress 5.8 or later, PHP 7.4 or later",
+  "softwareVersion": "0.9.3",
+  "url": "https://matt-interfaces.ch/lessclicks",
+  "installUrl": "https://wordpress.org/plugins/lessclicks-analytics-for-matomo/",
+  "downloadUrl": "https://downloads.wordpress.org/plugin/lessclicks-analytics-for-matomo.0.9.3.zip",
+  "codeRepository": "https://github.com/Matt-Interfaces/lessclicks",
+  "license": "https://www.gnu.org/licenses/gpl-2.0.html",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "CHF",
+    "availability": "https://schema.org/InStock"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Matt Interfaces",
+    "url": "https://www.matt-interfaces.ch"
+  },
+  "featureList": [
+    "Dashboard widget with unique visitors, page views, bounce rate, average session duration and visitor trends",
+    "Line, bar and pie charts",
+    "Operating system families as a pie chart",
+    "Flexible date range with date picker",
+    "Custom accent color",
+    "PDF and PNG export",
+    "Automatic detection of Matomo for WordPress",
+    "Works with self-hosted Matomo and Matomo Cloud",
+    "REST endpoints protected by WordPress nonces and the manage_options capability"
+  ],
+  "inLanguage": ["en", "de"]
+}

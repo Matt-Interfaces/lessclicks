@@ -1,120 +1,153 @@
-=== Dashlytics - Matomo Analytics Widget ===
-Contributors: matt-interfaces
+=== Lessclicks Analytics for Matomo - Dashboard Widget ===
+Contributors: matt-interfaces, choooomedia
 Donate link: https://matt-interfaces.ch/zahlen
-Tags: matomo, analytics, dashboard, statistics, widget
+Tags: analytics, dashboard, matomo, statistics, widget
 Requires at least: 5.8
 Tested up to: 7.1
-Stable tag: 0.8.8
+Stable tag: 0.9.3
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Optimize your website success. Integrate Matomo Analytics seamlessly into your WordPress dashboard. Dashlytics — your analytics companion!
+Matomo Analytics in a WordPress dashboard widget: visitors, page views, bounce rate, trends. Works with Matomo for WordPress, self-hosted and Cloud.
 
 == Description ==
 
-Optimize your website success. Integrate Matomo Analytics seamlessly into your WordPress website. Maximize your performance with Dashlytics — your ultimate analytics companion! Download and try it for free.
+Lessclicks Analytics for Matomo shows your Matomo Analytics data in a dashboard widget inside the WordPress admin. It connects to Matomo for WordPress, a self-hosted Matomo installation or Matomo Cloud. You need no additional account.
 
-**Dashlytics** brings your Matomo Analytics data directly into your WordPress dashboard. No more switching between tabs — see your most important metrics at a glance and make data-driven decisions.
-
-= Features =
-
-* **Dashboard widget**: Elegant widget with visitor numbers, page views and more
-* **Interactive charts**: Choose between line, bar and pie charts
-* **Flexible date range**: Analyze any time period
-* **Customizable colors**: Adapt the design to your brand
-* **Auto-detection**: Automatic connection with Matomo for WordPress
-* **Modern UI**: User-friendly interface following WordPress design standards
-* **Secure**: Uses the WordPress REST API with nonce verification
-
-= Matomo Integration =
-
-Dashlytics works with:
-
-* **Matomo for WordPress** (recommended) - automatic detection and connection
-* **External Matomo installation** - connect to any Matomo instance
-* **Matomo Cloud** - full support for hosted solutions
-
-= Displayed Metrics =
+= What the widget shows =
 
 * Unique visitors
 * Page views
 * Bounce rate
 * Average session duration
 * Visitor trends over time
+* Operating system families as a pie chart
 
-= Customization Options =
+= What you can set up =
 
-* 4 different chart types
-* Freely selectable primary color
-* Configurable default time ranges
-* Responsive design for all screen sizes
+* Line, bar and pie charts
+* Any date range, chosen with a date picker
+* An accent color that matches your brand
+* PDF and PNG export of the current view
+
+= Three ways to connect Matomo =
+
+* **Matomo for WordPress:** Matomo runs inside your WordPress site as a plugin. Lessclicks detects it and connects when you click "Connect automatically".
+* **Self-hosted Matomo:** You run Matomo on your own server. Enter the Matomo URL, the Site ID and an API token.
+* **Matomo Cloud:** Matomo hosts the installation for you. Enter your cloud URL, for example https://your-company.matomo.cloud, and an API token.
+
+= How Lessclicks handles data =
+
+Lessclicks adds no tracking code to your website and collects no visitor data. It requests reports from your Matomo installation through the Matomo Reporting API. The requests run on your server.
+
+The plugin stores the Matomo URL, the Site ID, your display settings and the API token (encrypted) in WordPress options. Whether your measurement meets GDPR (DSGVO) requirements depends on your Matomo configuration. See https://matomo.org/privacy/ for details.
+
+= Access and security =
+
+The widget appears for administrators only. All REST endpoints use WordPress nonces and require the `manage_options` capability.
+
+= Requirements =
+
+* WordPress 5.8 or later
+* PHP 7.4 or later
+* A Matomo installation (Matomo for WordPress, self-hosted or Matomo Cloud) and an API token
+* One website per WordPress installation
+
+= Open source =
+
+Lessclicks is open source software, licensed under GPLv2 or later. The source code is on GitHub: https://github.com/Matt-Interfaces/lessclicks. Pull requests are welcome.
+
+Developed by Matt Interfaces. Plugin page: https://matt-interfaces.ch/lessclicks
 
 == Installation ==
 
-= Automatic Installation =
-
-1. Go to **Plugins > Add New** in your WordPress admin
-2. Search for "Dashlytics"
-3. Click **Install Now** and then **Activate**
-
-= Manual Installation =
-
-1. Download the plugin ZIP
-2. Go to **Plugins > Add New > Upload Plugin**
-3. Select the ZIP file and click **Install Now**
-4. Activate the plugin
-
-= Configuration =
-
-1. Go to **Dashlytics** in the admin menu
-2. If Matomo for WordPress is installed: click "Connect automatically"
-3. Or enter manually:
-   - Matomo URL (e.g. https://analytics.your-domain.com)
-   - Site ID (usually 1)
-   - API token (from Matomo settings)
-4. Click "Test connection"
-5. Save the settings
+1. In WordPress, go to **Plugins > Add New**, search for "Lessclicks Analytics for Matomo", then click **Install Now** and **Activate**. To install manually, use **Plugins > Add New > Upload Plugin** with the plugin ZIP.
+2. Open **Lessclicks** in the admin menu.
+3. If Matomo for WordPress is installed, click "Connect automatically". Otherwise enter your Matomo URL, Site ID and API token.
+4. Click "Test connection", then save the settings.
+5. Open the WordPress Dashboard to see the widget.
 
 == Frequently Asked Questions ==
 
+= Does Lessclicks work without a Matomo account? =
+
+No. Lessclicks displays data from an existing Matomo installation, so you need Matomo for WordPress, a self-hosted Matomo or Matomo Cloud. Lessclicks itself needs no separate account.
+
 = Where do I find my Matomo API token? =
 
-1. Open your Matomo dashboard
-2. Go to Settings > Personal > Security
-3. Under "Auth Token" you will find your token or can create a new one
+Open your Matomo dashboard and go to Settings > Personal > Security. Under "Auth Token" you can copy your token or create a new one.
 
 = Does the plugin work with Matomo Cloud? =
 
-Yes! Simply enter your Matomo Cloud URL (e.g. https://your-company.matomo.cloud) together with your API token.
+Yes. Enter your Matomo Cloud URL, for example https://your-company.matomo.cloud, together with your API token and Site ID.
 
-= Can I track multiple websites? =
+= Can I show more than one website? =
 
-Currently Dashlytics supports one website per WordPress installation. The Site ID can be adjusted in the settings.
+Not yet. Lessclicks supports one website per WordPress installation. You can change the Site ID in the settings at any time.
 
-= Is the plugin GDPR compliant? =
+= Does Lessclicks add tracking code to my site? =
 
-Dashlytics itself does not store visitor data. It only displays data from your Matomo installation. Make sure your Matomo configuration is GDPR compliant.
+No. Lessclicks only reads reports from your Matomo installation and displays them in the admin. It adds no frontend tracking code and stores no visitor data.
 
-= The widget shows no data =
+= Who can see the widget? =
 
-1. Check whether the connection in the settings is successful
-2. Make sure your API token has the correct permissions
-3. Verify that Matomo has data for the selected time period
+Administrators only. The widget is registered for administrators, and the REST endpoints require the `manage_options` capability.
 
 == Screenshots ==
 
-1. Combined dashboard widget with line chart and key metrics
-2. Pie chart showing visitor operating-system families
-3. Connection settings page for the Matomo API token and URL
-4. PNG/PDF export options from the WordPress dashboard widget
+1. Dashboard widget with a line chart of Matomo visits.
+2. Dashboard widget with a bar chart.
+3. Operating system families from Matomo shown as a pie chart.
+4. Lessclicks settings page in the WordPress admin.
+5. Dashboard widget with a pie chart and the report export menu for PDF and PNG.
 
 == Changelog ==
+
+= 0.9.3 =
+* Settings page translated into English and German; English is the source language.
+* Removed the duplicate connection status below the header. It now appears only in the header badge, at the auth token field and in the Chart Settings card.
+* Settings labels aligned with the admin design: Chart Settings, Site ID, Auth token, Chart-Type, Main color, Initial Date filter, Live preview, Reset, Save.
+* Added a "Use Matomo for WordPress" checkbox so manual Matomo configuration stays available when the Matomo plugin is installed.
+* Fixed the help tab, which referenced a non-existent connection tab and test button.
+
+= 0.9.2 =
+* Added screenshots to the plugin directory listing.
+* Excluded directory icon files from the plugin package.
+
+= 0.9.1 =
+* Updated the readme title, short description, tags, description, installation steps and FAQ.
+* Added the Lessclicks plugin icon to the WordPress.org directory assets.
+* Removed the developer README, the Open Graph marketing image and the unused share icon from the plugin ZIP.
+* Removed the Plugin Update Checker from the distribution package.
+
+= 0.9.0 =
+* Renamed the plugin to Lessclicks Analytics for Matomo.
+* Analytics and device REST endpoints now require the `manage_options` capability; the dashboard widget is only registered for administrators.
+* Removed WordPress.org directory assets from the plugin ZIP.
+* Removed the remote CDN reference from the bundled PDF export script.
+* Added the missing changelog entries for 0.8.4 to 0.8.8.
+
+= 0.8.8 =
+* Asset cache busting now uses the plugin version instead of file modification times.
+
+= 0.8.7 =
+* Maintenance release for the update flow.
+
+= 0.8.6 =
+* Aligned the plugin version constant with the plugin header.
+
+= 0.8.5 =
+* Added WordPress.org plugin screenshots.
+
+= 0.8.4 =
+* Bundled the missing Parsedown and PucReadmeParser files.
+* Added an automated GitHub release workflow.
 
 = 0.8.3 =
 * Migrated repository references to Matt-Interfaces organization.
 * All documentation translated to English.
-* Added project rules under `.clinerules/wp-dashlytics.md`.
+* Added project rules under `.clinerules/lessclicks.md`.
 
 = 0.8.2 =
 * Integrated WordPress-native updates via GitHub Releases until the WordPress.org directory is active.
@@ -149,7 +182,7 @@ Updates export styling to the selected accent color. Please review your settings
 
 == Privacy Policy ==
 
-Dashlytics itself does not collect user data. The plugin only displays statistics from your Matomo installation.
+Lessclicks itself does not collect user data. The plugin only displays statistics from your Matomo installation.
 
 Stored data:
 * Matomo URL (in WordPress options)
@@ -163,8 +196,8 @@ For privacy information about Matomo visit: https://matomo.org/privacy/
 
 = Developer =
 
-* Plugin page: https://matt-interfaces.ch/wp-dashlytics
-* GitHub: https://github.com/Matt-Interfaces/wp-dashlytics
+* Plugin page: https://matt-interfaces.ch/lessclicks
+* GitHub: https://github.com/Matt-Interfaces/lessclicks
 * Website: https://www.matt-interfaces.ch
 * Support: hoi@matt-interfaces.ch
 

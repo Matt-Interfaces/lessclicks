@@ -1,7 +1,7 @@
-import Settings from './DashlyticsSettings.svelte';
+import Settings from './LessclicksSettings.svelte';
 
-const dashlyticsadmin = new Settings({
-    target: document.querySelector('#dashlytics-settings')
+const lessclicksadmin = new Settings({
+    target: document.querySelector('#lessclicks-settings')
 });
 
 export default Settings;

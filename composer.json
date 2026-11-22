@@ -1,6 +1,6 @@
 {
-    "name": "matt-interfaces/dashlytics",
-    "description": "Dashlytics - Matomo Analytics Widget for WordPress",
+    "name": "matt-interfaces/lessclicks",
+    "description": "Lessclicks Analytics for Matomo for WordPress",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "authors": [

@@ -1,4 +1,4 @@
-# Dashlytics — Matomo Analytics Dashboard Widget
+# Lessclicks — Matomo Analytics Dashboard Widget
 
 A lightweight WordPress plugin that brings your Matomo analytics data into the WordPress dashboard. View visitors, page views, bounce rate and trends without switching tabs.
 
@@ -20,21 +20,21 @@ A lightweight WordPress plugin that brings your Matomo analytics data into the W
 
 ## Installation
 
-1. Download the latest ZIP from the [releases page](https://github.com/Matt-Interfaces/wp-dashlytics/releases).
+1. Download the latest ZIP from the [releases page](https://github.com/Matt-Interfaces/lessclicks/releases).
 2. In WordPress, go to **Plugins → Add New → Upload Plugin** and activate it.
-3. Open **Dashlytics** in the admin menu.
+3. Open **Lessclicks** in the admin menu.
 4. Connect Matomo automatically (if *Matomo for WordPress* is installed) or enter URL, Site ID and API token manually.
 
 ## Development
 
 ### Architecture
 
-Dashlytics is built as a modern WordPress plugin around two Svelte 4 SPAs:
+Lessclicks is built as a modern WordPress plugin around two Svelte 4 SPAs:
 
 - **Dashboard Widget** (`app/DashboardWidget.svelte`) — rendered via `wp_dashboard_setup`, built to `app/public/build/dashboardwidget.js`.
-- **Settings Page** (`app/DashlyticsSettings.svelte`) — rendered on `toplevel_page_dashlytics`, built to `app/public/build/settings.js` and `bundle.css`.
+- **Settings Page** (`app/LessclicksSettings.svelte`) — rendered on `toplevel_page_lessclicks`, built to `app/public/build/settings.js` and `bundle.css`.
 
-The PHP backend (`dashlytics-matomo.php`) uses the singleton pattern, exposes a custom REST namespace `dashlytics/v1`, proxies Matomo API requests, validates nonces and checks the `manage_options` capability.
+The PHP backend (`lessclicks-analytics-for-matomo.php`) uses the singleton pattern, exposes a custom REST namespace `lessclicks/v1`, proxies Matomo API requests, validates nonces and checks the `manage_options` capability.
 
 ### Build
 
@@ -46,14 +46,14 @@ cd ..
 bash build-plugin.sh
 ```
 
-The resulting installable ZIP is written to `dist/dashlytics-matomo-analytics-widget-{VERSION}.zip`.
+The resulting installable ZIP is written to `dist/lessclicks-analytics-for-matomo-{VERSION}.zip`.
 
 ### Automated Releases
 
 Pushing a Git tag `vX.Y.Z` triggers `.github/workflows/release.yml`:
 
 1. Runs PHPCS and the Svelte build.
-2. Executes `build-plugin.sh` to create `dist/dashlytics-matomo-analytics-widget-X.Y.Z.zip`.
+2. Executes `build-plugin.sh` to create `dist/lessclicks-analytics-for-matomo-X.Y.Z.zip`.
 3. Creates a GitHub Release and attaches the ZIP automatically.
 
 Example:
@@ -74,7 +74,7 @@ No manual ZIP upload is needed.
 | `svelte` | `^4.2.x` | UI framework | Migration to Svelte 5 is planned separately |
 | `rollup` | `^4.x` | Bundler | Latest compatible minor |
 
-The plugin uses the `dashlytics-matomo-analytics-widget` text domain. Translation files (`dashlytics-matomo-analytics-widget.pot`, `dashlytics-matomo-analytics-widget-de_DE.po/mo`, `dashlytics-matomo-analytics-widget-en_US.po/mo`) are available under `languages/`.
+The plugin uses the `lessclicks-analytics-for-matomo` text domain. English is the source language. The catalog (`lessclicks-analytics-for-matomo.pot`) and the German translation (`lessclicks-analytics-for-matomo-de_DE.po/mo`) are available under `languages/`.
 
 ### Plugin Updates
 
@@ -88,7 +88,7 @@ GPL-2.0-or-later. See [LICENSE](LICENSE) for details.
 
 Developed by [Matt Interfaces](https://www.matt-interfaces.ch).
 
-- Website: [https://matt-interfaces.ch/wp-dashlytics](https://matt-interfaces.ch/wp-dashlytics)
+- Website: [https://matt-interfaces.ch/lessclicks](https://matt-interfaces.ch/lessclicks)
 - Support: [hoi@matt-interfaces.ch](mailto:hoi@matt-interfaces.ch)
 - Support the project: [https://matt-interfaces.ch/zahlen](https://matt-interfaces.ch/zahlen)
 

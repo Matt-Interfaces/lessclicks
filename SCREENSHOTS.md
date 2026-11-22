@@ -1,4 +1,4 @@
-# Dashlytics Screenshot Guide
+# Lessclicks Screenshot Guide
 
 Guide for creating screenshots for the WordPress.org plugin directory and the plugin README, including recommended resolution, file names and content.
 
@@ -14,7 +14,7 @@ Guide for creating screenshots for the WordPress.org plugin directory and the pl
 
 ### screenshot-1.png — Dashboard Widget (Main View)
 
-**Scenario:** WordPress Dashboard with the Dashlytics widget active and real data.
+**Scenario:** WordPress Dashboard with the Lessclicks widget active and real data.
 
 **Content:**
 - Line chart (default) showing visits for the last 30 days.
@@ -37,7 +37,7 @@ Guide for creating screenshots for the WordPress.org plugin directory and the pl
 
 ### screenshot-3.png — Settings (Connection Tab)
 
-**Scenario:** Dashlytics Settings page, "Connection" tab.
+**Scenario:** Lessclicks Settings page, "Connection" tab.
 
 **Content:**
 - Connection form with Matomo URL, Site ID, Auth Token.
@@ -47,7 +47,7 @@ Guide for creating screenshots for the WordPress.org plugin directory and the pl
 
 ### screenshot-4.png — Settings (Display Tab with Preview)
 
-**Scenario:** Dashlytics Settings page, "Display" tab.
+**Scenario:** Lessclicks Settings page, "Display" tab.
 
 **Content:**
 - Chart type selection (Line / Bar / Pie).
@@ -58,13 +58,13 @@ Guide for creating screenshots for the WordPress.org plugin directory and the pl
 ## Workflow
 
 1. **Prepare test site**
-   - Fresh WordPress instance with Dashlytics installed and connected (prefer Matomo for WordPress or demo data).
+   - Fresh WordPress instance with Lessclicks installed and connected (prefer Matomo for WordPress or demo data).
 2. **Visit dashboard**
    - `/wp-admin/index.php`
 3. **Window size**
    - Scale browser to 1440 px width, widget fully in viewport.
 4. **Screenshot**
-   - Crop to the Dashlytics widget only.
+   - Crop to the Lessclicks widget only.
    - Blur sensitive tokens/URLs.
 5. **Export / Edit**
    - Export PNG at 2× scale, e.g. 1440×900 → 2880×1800 px.
@@ -74,7 +74,7 @@ Guide for creating screenshots for the WordPress.org plugin directory and the pl
 7. **Update readme.txt**
    ```
    == Screenshots ==
-   1. Dashlytics line chart showing visits for the last 30 days.
+   1. Lessclicks line chart showing visits for the last 30 days.
    2. OS family distribution as a pie chart.
    3. Connection settings with automatic Matomo detection.
    4. Display settings with live preview.

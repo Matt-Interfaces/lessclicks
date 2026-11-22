@@ -1,8 +1,8 @@
 {
-    "name": "dashlytics-app",
-    "version": "0.8.3",
+    "name": "lessclicks-app",
+    "version": "0.9.3",
     "type": "module",
-    "description": "Dashlytics - Matomo Analytics Widget für WordPress",
+    "description": "Lessclicks Analytics for Matomo für WordPress",
     "main": "index.js",
     "scripts": {
         "build": "rollup -c",

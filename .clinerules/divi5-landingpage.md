@@ -2,13 +2,13 @@
 
 ## Scope boundary — read this first
 
-This repository (`wp-dashlytics`) is a **Svelte 4 + PHP WordPress plugin project** (see root
+This repository (`lessclicks`) is a **Svelte 4 + PHP WordPress plugin project** (see root
 `README.md` / `composer.json` / `app/`). The `divi5/` folder is a **self-contained, isolated
 zone** for authoring Divi 5 landing/marketing pages on the agency site `matt-interfaces.ch` and
 must **never** be treated as part of the plugin's build pipeline, Svelte app, or PHP codebase.
 
 - Never import, require, or reference anything under `divi5/` from `app/`, `includes/`,
-  `dashlytics-matomo.php`, or any Svelte component.
+  `lessclicks-analytics-for-matomo.php`, or any Svelte component.
 - Never run `npm run build` / `composer` tasks against `divi5/` content.
 - `divi5/divi5-skill/` is a **vendored read-only reference** (cloned from
   `github.com/divilovewp/divi5-skill`, MIT licensed, `.git` stripped). Do not hand-edit its
@@ -18,7 +18,7 @@ must **never** be treated as part of the plugin's build pipeline, Svelte app, or
 
 ## Future plan (do not build yet — planning note only)
 
-A **separate, standalone website** for the Dashlytics plugin itself (its own domain/property,
+A **separate, standalone website** for the Lessclicks plugin itself (its own domain/property,
 likely also Divi 5 or a dedicated landing framework) is planned for later. When that work starts:
 - It gets its own repo or its own top-level folder — **not** nested inside `divi5/` here.
 - This file's rules still apply for anything authored with the Divi 5 skill, but the content

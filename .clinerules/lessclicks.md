@@ -1,4 +1,4 @@
-# Dashlytics Project Rules
+# Lessclicks Project Rules
 
 This repository is a **WordPress plugin** that renders Matomo Analytics data inside the WordPress dashboard. It is **not** a SvelteKit app, a generic Node project, or part of the Divi 5 landing-page work in `divi5/`.
 
@@ -7,14 +7,14 @@ This repository is a **WordPress plugin** that renders Matomo Analytics data ins
 | Layer | Technology |
 |---|---|
 | Backend | PHP 7.4+ (WordPress plugin API, REST, capabilities, nonces) |
-| Main class | `includes/class-dashlytics.php` |
+| Main class | `includes/class-lessclicks.php` |
 | Frontend | Svelte 4 SPAs built with Rollup |
 | Dashboard widget | `app/DashboardWidget.svelte` → `app/public/build/dashboardwidget.js` |
-| Settings page | `app/DashlyticsSettings.svelte` → `app/public/build/settings.js` |
+| Settings page | `app/LessclicksSettings.svelte` → `app/public/build/settings.js` |
 | Styles | `assets/css/admin.css`, `assets/css/widget.css` |
 | Admin JS | `assets/js/admin.js` |
-| i18n | Text domain `dashlytics-matomo-analytics-widget`; `languages/dashlytics-matomo-analytics-widget.pot` + `dashlytics-matomo-analytics-widget-de_DE` / `dashlytics-matomo-analytics-widget-en_US` `.po/.mo` |
-| Updates | Vendored Plugin Update Checker pointing to GitHub `Matt-Interfaces/wp-dashlytics` |
+| i18n | Text domain `lessclicks-analytics-for-matomo`; `languages/lessclicks-analytics-for-matomo.pot` + `languages/lessclicks-analytics-for-matomo-de_DE` `.po/.mo` |
+| Updates | Vendored Plugin Update Checker pointing to GitHub `Matt-Interfaces/lessclicks` |
 | Code standards | WPCS via `composer.json` + `phpcs.xml.dist` |
 | CI | GitHub Actions `.github/workflows/ci.yml` (PHPCS + Svelte build) |
 | CD | GitHub Actions `.github/workflows/release.yml` (build + attach ZIP to release) |
@@ -32,7 +32,7 @@ This repository is a **WordPress plugin** that renders Matomo Analytics data ins
 - Examples: `chore(repo): ...`, `feat(widget): ...`, `fix(settings): ...`, `docs(readme): ...`.
 - Keep commits atomic and focused on one concern.
 - Tag releases with `vX.Y.Z` and push tags (`git push origin refs/tags/vX.Y.Z`).
-- The canonical remote is `git@github.com:Matt-Interfaces/wp-dashlytics.git`.
+- The canonical remote is `git@github.com:Matt-Interfaces/lessclicks.git`.
 
 ## Build process
 
@@ -44,7 +44,7 @@ cd ..
 bash build-plugin.sh
 ```
 
-Result: `dist/dashlytics-matomo-analytics-widget-{VERSION}.zip`.
+Result: `dist/lessclicks-analytics-for-matomo-{VERSION}.zip`.
 
 ## Quality gate before push
 
@@ -60,10 +60,10 @@ PHPCS must be clean. The vendored `includes/plugin-update-checker/` is excluded 
 
 ## i18n rules
 
-- Use `__( 'String', 'dashlytics-matomo-analytics-widget' )` in PHP; do not hardcode untranslated UI strings.
-- Source strings are currently German; `dashlytics-matomo-analytics-widget-de_DE.po` maps msgstr to msgid, `dashlytics-matomo-analytics-widget-en_US.po` provides English translations.
-- When adding new translatable strings, regenerate/extend `.pot`, `.po` and `.mo` files and update `build-plugin.sh` if needed.
+- Use `__( 'String', 'lessclicks-analytics-for-matomo' )` in PHP; do not hardcode untranslated UI strings.
+- English is the source language. `lessclicks-analytics-for-matomo-de_DE.po` contains the German translations; there is no `en_US` catalog.
+- When adding new translatable strings, regenerate the `.pot`, extend the `de_DE.po` and compile the `.mo`.
 
 ## Update checker
 
-The Plugin Update Checker (PUC) vendored library remains in `includes/plugin-update-checker/` for historical reference, but it is **not copied into the distribution ZIP** and its initialization code has been removed from `dashlytics-matomo.php` for the WordPress.org submission. After WP.org approval, updates are delivered through the official WordPress.org plugin directory.
+The Plugin Update Checker (PUC) vendored library remains in `includes/plugin-update-checker/` for historical reference, but it is **not copied into the distribution ZIP** and its initialization code has been removed from `lessclicks-analytics-for-matomo.php` for the WordPress.org submission. After WP.org approval, updates are delivered through the official WordPress.org plugin directory.

@@ -1,7 +1,7 @@
 import DashboardWidget from './DashboardWidget.svelte';
 
 function initWidget() {
-    const target = document.querySelector("#dashlytics-widget");
+    const target = document.querySelector("#lessclicks-widget");
     if (target) {
         new DashboardWidget({
             target: target

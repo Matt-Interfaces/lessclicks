@@ -1,4 +1,4 @@
-name: Dashlytics CI
+name: Lessclicks CI
 
 on:
   push:

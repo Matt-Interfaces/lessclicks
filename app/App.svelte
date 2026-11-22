@@ -1,8 +1,8 @@
 <script>
-    import Settings from './DashlyticsSettings.svelte';
+    import Settings from './LessclicksSettings.svelte';
 </script>
 
-<div id="dashlyticsadmin">
+<div id="lessclicksadmin">
     <Settings />
 </div>
 

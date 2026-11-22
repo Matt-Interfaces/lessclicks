@@ -6,6 +6,23 @@ import terser from '@rollup/plugin-terser';
 
 const production = !process.env.ROLLUP_WATCH;
 
+// WordPress.org does not allow references to remote files. jsPDF ships a
+// hard-coded cdnjs URL for its "pdfobjectnewwindow" output mode, which this
+// plugin never uses. Strip it from the generated bundles.
+const stripRemoteReferences = () => ({
+    name: 'strip-remote-references',
+    generateBundle(options, bundle) {
+        for (const file of Object.values(bundle)) {
+            if (file.type === 'chunk') {
+                file.code = file.code.replace(
+                    /https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/pdfobject\/[\d.]+\/pdfobject\.min\.js/g,
+                    ''
+                );
+            }
+        }
+    }
+});
+
 export default [
     // Dashboard widget bundle
     {
@@ -13,7 +30,7 @@ export default [
         output: {
             sourcemap: !production,
             format: 'iife',
-            name: 'DashlyticsWidget',
+            name: 'LessclicksWidget',
             file: 'public/build/dashboardwidget.js',
             inlineDynamicImports: true
         },
@@ -31,7 +48,8 @@ export default [
                 dedupe: ['svelte']
             }),
             commonjs(),
-            production && terser()
+            production && terser(),
+            stripRemoteReferences()
         ],
         watch: {
             clearScreen: false
@@ -43,7 +61,7 @@ export default [
         output: {
             sourcemap: !production,
             format: 'iife',
-            name: 'DashlyticsSettings',
+            name: 'LessclicksSettings',
             file: 'public/build/settings.js',
             inlineDynamicImports: true
         },
@@ -59,7 +77,8 @@ export default [
                 dedupe: ['svelte']
             }),
             commonjs(),
-            production && terser()
+            production && terser(),
+            stripRemoteReferences()
         ],
         watch: {
             clearScreen: false

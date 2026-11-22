@@ -2,11 +2,11 @@
 import { onMount, onDestroy } from "svelte";
 import { fade } from "svelte/transition";
 import { Chart } from 'chart.js/auto';
-import DashlyticsInput from './components/DashlyticsInput.svelte';
+import LessclicksInput from './components/LessclicksInput.svelte';
 
 // Global WordPress data
-const wpData = window.dashlyticsAdmin || {};
-const restUrl = wpData.restUrl || '/wp-json/dashlytics/v1/';
+const wpData = window.lessclicksAdmin || {};
+const restUrl = wpData.restUrl || '/wp-json/lessclicks/v1/';
 const nonce = wpData.nonce || '';
 const pluginUrl = wpData.pluginUrl || '';
 const version = wpData.version || '';
@@ -62,17 +62,17 @@ function maskToken(token) {
 }
 
 const chartTypes = [
-    { value: 'line', label: i18n.line || 'Liniendiagramm', iconClass: 'dashicons-chart-line' },
-    { value: 'bar', label: i18n.bar || 'Balkendiagramm', iconClass: 'dashicons-chart-bar' },
-    { value: 'pie', label: i18n.pie || 'Kreisdiagramm', iconClass: 'dashicons-chart-pie' }
+    { value: 'line', label: i18n.line || 'Line chart', iconClass: 'dashicons-chart-line' },
+    { value: 'bar', label: i18n.bar || 'Bar chart', iconClass: 'dashicons-chart-bar' },
+    { value: 'pie', label: i18n.pie || 'Pie chart', iconClass: 'dashicons-chart-pie' }
 ];
 
 const dateRanges = [
-    { value: 7, label: i18n.last7days || 'Letzte 7 Tage' },
-    { value: 14, label: i18n.last14days || 'Letzte 14 Tage' },
-    { value: 30, label: i18n.last30days || 'Letzte 30 Tage' },
-    { value: 60, label: i18n.last60days || 'Letzte 60 Tage' },
-    { value: 90, label: i18n.last90days || 'Letzte 90 Tage' }
+    { value: 7, label: i18n.last7days || 'Last 7 days' },
+    { value: 14, label: i18n.last14days || 'Last 14 days' },
+    { value: 30, label: i18n.last30days || 'Last 30 days' },
+    { value: 60, label: i18n.last60days || 'Last 60 days' },
+    { value: 90, label: i18n.last90days || 'Last 90 days' }
 ];
 
 // Persist helper (without UI feedback)
@@ -142,9 +142,9 @@ async function saveSettings() {
         const ok = await persistSettings();
 
         if (ok) {
-            showToast(i18n.saveSuccess || 'Einstellungen gespeichert!', 'success');
+            showToast(i18n.saveSuccess || 'Settings saved.', 'success');
         } else {
-            showToast(i18n.saveError || 'Fehler beim Speichern.', 'error');
+            showToast(i18n.saveError || 'Could not save settings.', 'error');
         }
     } finally {
         saving = false;
@@ -189,7 +189,7 @@ async function loadPreviewData() {
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.message || i18n.previewError || 'Fehler beim Laden der Vorschau');
+            throw new Error(errorData.message || i18n.previewError || 'Could not load the preview.');
         }
 
         const data = await response.json();
@@ -229,7 +229,7 @@ function formatPreviewLabel(dateStr) {
     if (!dateStr) return '';
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return dateStr;
-    return date.toLocaleDateString(i18n.locale || 'de-DE', { day: '2-digit', month: '2-digit' });
+    return date.toLocaleDateString(wpData.locale || 'en-US', { day: '2-digit', month: '2-digit' });
 }
 
 function safeHex(color) {
@@ -272,7 +272,7 @@ function createPreviewChart() {
         ? previewData.map(d => d.value)
         : previewSlice.map(d => d.value);
 
-    const datasetLabel = isPie ? (i18n.osFamilies || 'OS-Familien') : (i18n.visits || 'Besuche');
+    const datasetLabel = isPie ? (i18n.osFamilies || 'Operating system families') : (i18n.visits || 'Visits');
 
     previewChart = new Chart(ctx, {
         type: settings.chart_type,
@@ -396,20 +396,20 @@ async function testConnection(silent = false) {
             connectionStatus = 'success';
             connectionMessage = data.message || '';
             if (!silent) {
-                showToast(i18n.connectionSuccess || 'Verbindung erfolgreich!', 'success');
+                showToast(i18n.connectionSuccess || 'Connection successful.', 'success');
             }
         } else {
             connectionStatus = 'error';
-            connectionMessage = data.message || data.data?.message || i18n.connectionError || 'Verbindung fehlgeschlagen.';
+            connectionMessage = data.message || data.data?.message || i18n.connectionError || 'Connection failed.';
             if (!silent) {
-                showToast(i18n.connectionError || 'Verbindung fehlgeschlagen.', 'error');
+                showToast(i18n.connectionError || 'Connection failed.', 'error');
             }
         }
     } catch (error) {
         connectionStatus = 'error';
         connectionMessage = error.message;
         if (!silent) {
-            showToast(i18n.connectionError || 'Verbindung fehlgeschlagen.', 'error');
+            showToast(i18n.connectionError || 'Connection failed.', 'error');
         }
     } finally {
         testing = false;
@@ -428,18 +428,18 @@ async function detectToken() {
         
         if (data.success && data.token) {
             settings.token_auth = data.token;
-            showToast(i18n.tokenGenerated || 'Token automatisch erkannt!', 'success');
+            showToast(i18n.tokenGenerated || 'Token detected automatically.', 'success');
             return { useWpAuth: false, token: data.token };
         } else if (data.use_wp_auth) {
             settings.token_auth = ''; // Clear any existing token
-            showToast(data.message || i18n.wpAuthUsed || 'WordPress Authentifizierung wird verwendet', 'success');
+            showToast(i18n.wpAuthUsed || 'WordPress authentication is used.', 'success');
             return { useWpAuth: true };
         }
         
         return { useWpAuth: false };
     } catch (error) {
         console.error('Token detection failed:', error);
-        showToast(i18n.detectTokenFailed || 'Token-Erkennung fehlgeschlagen', 'error');
+        showToast(i18n.detectTokenFailed || 'Token detection failed.', 'error');
         return { useWpAuth: false, error: error.message };
     }
 }
@@ -454,7 +454,7 @@ function showToast(message, type = 'info') {
 async function useMatomoWP(silent = false) {
     if (!matomoDetected.installed) {
         if (!silent) {
-            showToast(i18n.mfWNotInstalled || 'Matomo for WordPress ist nicht installiert.', 'error');
+            showToast(i18n.mfWNotInstalled || 'Matomo for WordPress is not installed.', 'error');
         }
         return;
     }
@@ -476,19 +476,19 @@ async function useMatomoWP(silent = false) {
             settings.token_auth = '';
             autoConnected = true;
             connectionStatus = 'success';
-            connectionMessage = i18n.autoConnected || 'WordPress Authentifizierung aktiv';
+            connectionMessage = i18n.autoConnected || 'WordPress authentication active';
         } else if (settings.token_auth) {
             // A token was found and set
             autoConnected = true;
             connectionStatus = 'success';
-            connectionMessage = i18n.autoConnectedToken || 'Automatisch mit Matomo for WordPress verbunden (Token erkannt)';
+            connectionMessage = i18n.autoConnectedToken || 'Connected to Matomo for WordPress automatically (token detected).';
         } else {
             // No token and no WordPress auth
             autoConnected = false;
             connectionStatus = 'error';
-            connectionMessage = i18n.noAuthMethod || 'Konnte keine gültige Authentifizierungsmethode erkennen';
+            connectionMessage = i18n.noAuthMethod || 'Could not detect a valid authentication method.';
             if (!silent) {
-                showToast(i18n.connectionErrorManual || 'Verbindungsfehler - bitte manuell konfigurieren', 'error');
+                showToast(i18n.connectionErrorManual || 'Connection failed. Configure Matomo manually.', 'error');
             }
             autoConnecting = false;
             return;
@@ -503,12 +503,23 @@ async function useMatomoWP(silent = false) {
     } catch (error) {
         autoConnected = false;
         connectionStatus = 'error';
-        connectionMessage = error.message || i18n.autoConnectionFailed || 'Automatische Verbindung fehlgeschlagen';
+        connectionMessage = error.message || i18n.autoConnectionFailed || 'Automatic connection failed.';
         if (!silent) {
-            showToast(i18n.autoConnectionFailed || 'Automatische Verbindung fehlgeschlagen', 'error');
+            showToast(i18n.autoConnectionFailed || 'Automatic connection failed.', 'error');
         }
     } finally {
         autoConnecting = false;
+    }
+}
+
+function toggleAutoDetect() {
+    if (settings.auto_detect_matomo) {
+        useMatomoWP(true);
+    } else {
+        autoConnected = false;
+        connectionStatus = null;
+        connectionMessage = '';
+        settings.token_auth = '';
     }
 }
 
@@ -517,178 +528,125 @@ onMount(() => {
 });
 </script>
 
-<div class="dashlytics-settings">
+<div class="lessclicks-settings">
     <!-- Header -->
-    <header class="dashlytics-header">
-        <div class="dashlytics-header-content">
-            <div class="dashlytics-logo">
-                <img src="{pluginUrl}assets/images/dashlytics-logo.svg" alt="Dashlytics">
+    <header class="lessclicks-header">
+        <div class="lessclicks-header-content">
+            <div class="lessclicks-logo">
+                <img src="{pluginUrl}assets/images/lessclicks-logo.svg" alt="Lessclicks">
             </div>
             <div>
-                <h1>Dashlytics</h1>
-                <p>{i18n.tagline || 'Matomo Widget Dashboard für WordPress'}</p>
+                <h1>Lessclicks</h1>
+                <p>{i18n.tagline || 'Matomo widget dashboard for WordPress'}</p>
             </div>
         </div>
-        <div class="dashlytics-header-actions">
-            <span class="dashlytics-version">{version ? 'v' + version : ''}</span>
+        <div class="lessclicks-header-actions">
+            <span class="lessclicks-version">{version ? 'v' + version : ''}</span>
             {#if testing || autoConnecting}
-                <span class="dashlytics-status dashlytics-status--checking">
-                    <span class="dashlytics-status-dot dashlytics-status-dot--spin"></span>
-                    {i18n.checking || 'Verbindung wird geprüft…'}
+                <span class="lessclicks-status lessclicks-status--checking">
+                    <span class="lessclicks-status-dot lessclicks-status-dot--spin"></span>
+                    {i18n.checking || 'Checking connection…'}
                 </span>
             {:else if connectionStatus === 'success'}
-                <span class="dashlytics-status dashlytics-status--connected" title={connectionMessage}>
-                    <span class="dashlytics-status-dot"></span>
-                    {matomoDetected.installed && settings.auto_detect_matomo ? (i18n.matomoWp || 'Matomo WP') : (i18n.connected || 'Verbunden')}
+                <span class="lessclicks-status lessclicks-status--connected" title={connectionMessage}>
+                    <span class="lessclicks-status-dot"></span>
+                    {matomoDetected.installed && settings.auto_detect_matomo ? (i18n.matomoWp || 'Matomo WP') : (i18n.connected || 'Connected')}
                 </span>
             {:else if connectionStatus === 'error'}
-                <span class="dashlytics-status dashlytics-status--disconnected" title={connectionMessage}>
-                    <span class="dashlytics-status-dot"></span>
-                    {i18n.notConnected || 'Nicht verbunden'}
+                <span class="lessclicks-status lessclicks-status--disconnected" title={connectionMessage}>
+                    <span class="lessclicks-status-dot"></span>
+                    {i18n.notConnected || 'Not connected'}
                 </span>
             {:else}
-                <span class="dashlytics-status dashlytics-status--pending">
-                    <span class="dashlytics-status-dot"></span>
-                    {i18n.configurationRequired || 'Konfiguration erforderlich'}
+                <span class="lessclicks-status lessclicks-status--pending">
+                    <span class="lessclicks-status-dot"></span>
+                    {i18n.configurationRequired || 'Configuration required'}
                 </span>
             {/if}
         </div>
     </header>
 
-    <!-- Matomo Detection Banner -->
-    {#if matomoDetected.installed}
-        <div 
-            class="dashlytics-detection"
-            class:dashlytics-detection--success={connectionStatus === 'success' && settings.auto_detect_matomo}
-            class:dashlytics-detection--error={connectionStatus === 'error' && settings.auto_detect_matomo}
-        >
-            <div class="dashlytics-detection-icon">
-                {#if autoConnecting}
-                    <span class="dashlytics-detection-spinner"></span>
-                {:else if connectionStatus === 'success' && settings.auto_detect_matomo}
-                    <span class="dashicons dashicons-yes" aria-hidden="true"></span>
-                {:else if connectionStatus === 'error' && settings.auto_detect_matomo}
-                    <span class="dashicons dashicons-warning" aria-hidden="true"></span>
-                {:else}
-                    <span class="dashicons dashicons-search" aria-hidden="true"></span>
-                {/if}
-            </div>
-            <div class="dashlytics-detection-content">
-                {#if autoConnecting}
-                    <h3>{i18n.connectingMfW || 'Matomo for WordPress verbinden…'}</h3>
-                    <p>{i18n.connectingMfWDesc || 'Authentifizierungsmethode wird ermittelt und Einstellungen werden übernommen.'}</p>
-                {:else if connectionStatus === 'success' && settings.auto_detect_matomo}
-                    <h3>{i18n.connectedMfW || 'Matomo for WordPress verbunden!'}</h3>
-                    <p>{connectionMessage || i18n.connectedMfWDesc || 'Dashlytics nutzt die WordPress-interne Matomo-Installation.'}</p>
-                {:else if connectionStatus === 'error' && settings.auto_detect_matomo}
-                    <h3>{i18n.autoConnectionFailed || 'Automatische Verbindung fehlgeschlagen'}</h3>
-                    <p>{connectionMessage || i18n.autoConnectionFailedDesc || 'Bitte prüfen Sie die Matomo-Einstellungen oder hinterlegen Sie Daten für eine manuelle Verbindung.'}</p>
-                {:else}
-                    <h3>{i18n.mfWDetected || 'Matomo for WordPress erkannt!'}</h3>
-                    <p>{i18n.mfWDetectedDesc || 'Das Matomo Plugin ist installiert. Dashlytics kann automatisch verbunden werden.'}</p>
-                {/if}
-            </div>
-            {#if !(connectionStatus === 'success' && settings.auto_detect_matomo)}
-                <button 
-                    class="dashlytics-btn dashlytics-btn--success"
-                    class:dashlytics-btn--loading={autoConnecting}
-                    on:click={() => useMatomoWP()}
-                    disabled={autoConnecting}
-                    aria-busy={autoConnecting}
-                    aria-live="polite"
-                    type="button"
-                >
-                    {autoConnecting ? (i18n.connecting || 'Verbinde…') : (i18n.connectAutomatically || 'Automatisch verbinden')}
-                </button>
-            {:else}
-                <button 
-                    class="dashlytics-btn dashlytics-btn--secondary"
-                    on:click={() => {
-                        settings.auto_detect_matomo = false;
-                        connectionStatus = null;
-                        connectionMessage = '';
-                        autoConnected = false;
-                    }}
-                    type="button"
-                >
-                    {i18n.disableAutomatically || 'Automatisch deaktivieren'}
-                </button>
-            {/if}
-        </div>
-    {/if}
-
     <!-- Tabs -->
-    <div class="dashlytics-tabs" role="tablist" aria-label={i18n.settingsTabs || 'Einstellungsbereiche'}>
+    <div class="lessclicks-tabs" role="tablist" aria-label={i18n.settingsTabs || 'Settings sections'}>
         <button 
-            class="dashlytics-tab" 
-            class:dashlytics-tab--active={activeTab === 'settings'}
+            class="lessclicks-tab" 
+            class:lessclicks-tab--active={activeTab === 'settings'}
             on:click={() => activeTab = 'settings'}
             role="tab"
             aria-selected={activeTab === 'settings'}
-            aria-controls="dashlytics-tab-panel"
-            id="dashlytics-tab-settings"
+            aria-controls="lessclicks-tab-panel"
+            id="lessclicks-tab-settings"
             type="button"
         >
-            <span class="dashicons dashicons-admin-generic" aria-hidden="true"></span>{i18n.settings || 'Einstellungen'}
+            <span class="dashicons dashicons-admin-generic" aria-hidden="true"></span>{i18n.settings || 'Settings'}
         </button>
         <button 
-            class="dashlytics-tab" 
-            class:dashlytics-tab--active={activeTab === 'help'}
+            class="lessclicks-tab" 
+            class:lessclicks-tab--active={activeTab === 'help'}
             on:click={() => activeTab = 'help'}
             role="tab"
             aria-selected={activeTab === 'help'}
-            aria-controls="dashlytics-tab-panel"
-            id="dashlytics-tab-help"
+            aria-controls="lessclicks-tab-panel"
+            id="lessclicks-tab-help"
             type="button"
         >
-            <span class="dashicons dashicons-editor-help" aria-hidden="true"></span>{i18n.help || 'Hilfe'}
+            <span class="dashicons dashicons-editor-help" aria-hidden="true"></span>{i18n.help || 'Help'}
         </button>
     </div>
 
     {#if loading}
-        <div class="dashlytics-card" role="status" aria-live="polite" aria-label={i18n.loadingSettings || 'Einstellungen werden geladen'}>
-            <div class="dashlytics-card-body">
-                <div class="dashlytics-skeleton" style="height: 24px; margin-bottom: 16px;"></div>
-                <div class="dashlytics-skeleton" style="height: 120px;"></div>
+        <div class="lessclicks-card" role="status" aria-live="polite" aria-label={i18n.loadingSettings || 'Loading settings'}>
+            <div class="lessclicks-card-body">
+                <div class="lessclicks-skeleton" style="height: 24px; margin-bottom: 16px;"></div>
+                <div class="lessclicks-skeleton" style="height: 120px;"></div>
             </div>
         </div>
     {:else}
     {#key activeTab}
-    <div class="dashlytics-tab-panel" id="dashlytics-tab-panel" role="tabpanel" aria-labelledby="dashlytics-tab-{activeTab}" in:fade={{ duration: 200, delay: 50 }}>
+    <div class="lessclicks-tab-panel" id="lessclicks-tab-panel" role="tabpanel" aria-labelledby="lessclicks-tab-{activeTab}" in:fade={{ duration: 200, delay: 50 }}>
         <!-- Settings Tab -->
         {#if activeTab === 'settings'}
-            <div class="dashlytics-grid">
-                <div class="dashlytics-card dashlytics-card--flex">
-                    <div class="dashlytics-card-header">
-                        <h2 class="dashlytics-card-title">
-                            <span class="dashlytics-card-icon"><span class="dashicons dashicons-admin-customizer" aria-hidden="true"></span></span>
-                            {i18n.chartSettings || 'Chart Einstellungen'}
+            <div class="lessclicks-grid">
+                <div class="lessclicks-card lessclicks-card--flex">
+                    <div class="lessclicks-card-header">
+                        <h2 class="lessclicks-card-title">
+                            <span class="lessclicks-card-icon"><span class="dashicons dashicons-admin-customizer" aria-hidden="true"></span></span>
+                            {i18n.chartSettings || 'Chart Settings'}
                         </h2>
                     </div>
-                    <div class="dashlytics-card-body dashlytics-card-body--grow">
-                        {#if !matomoDetected.installed}
-                            <div class="dashlytics-form-group">
-                                <label class="dashlytics-label" for="dashlytics-matomo-url">
+                    <div class="lessclicks-card-body lessclicks-card-body--grow">
+                        {#if !matomoDetected.installed || !settings.auto_detect_matomo}
+                            <div class="lessclicks-form-group">
+                                <label class="lessclicks-label" for="lessclicks-matomo-url">
                                     {i18n.matomoUrl || 'Matomo URL'}
-                                    <span class="dashlytics-label-hint">({i18n.matomoUrlHint || 'Ihre Matomo Installation'})</span>
+                                    <span class="lessclicks-label-hint">({i18n.matomoUrlHint || 'Your Matomo installation'})</span>
                                 </label>
-                                <DashlyticsInput
-                                    id="dashlytics-matomo-url"
+                                <LessclicksInput
+                                    id="lessclicks-matomo-url"
                                     type="url"
                                     bind:value={settings.matomo_url}
-                                    placeholder={i18n.matomoUrlPlaceholder || 'https://analytics.ihre-domain.de'}
+                                    placeholder={i18n.matomoUrlPlaceholder || 'https://analytics.example.com'}
                                 />
                             </div>
                         {/if}
 
-                        <div class="dashlytics-form-row">
-                            <div class="dashlytics-form-group dashlytics-form-group--compact">
-                                <label class="dashlytics-label" for="dashlytics-site-id">
-                                    {i18n.siteId || 'Site ID'}
-                                    <span class="dashlytics-label-hint">({i18n.siteIdHint || 'Standard: 1'})</span>
+                        {#if matomoDetected.installed}
+                            <div class="lessclicks-form-group">
+                                <label class="lessclicks-checkbox">
+                                    <input type="checkbox" bind:checked={settings.auto_detect_matomo} on:change={toggleAutoDetect}>
+                                    <span>{i18n.useMatomoWp || 'Use Matomo for WordPress'}</span>
                                 </label>
-                                <DashlyticsInput
-                                    id="dashlytics-site-id"
+                            </div>
+                        {/if}
+
+                        <div class="lessclicks-form-row">
+                            <div class="lessclicks-form-group lessclicks-form-group--compact">
+                                <label class="lessclicks-label" for="lessclicks-site-id">
+                                    {i18n.siteId || 'Site ID'}
+                                    <span class="lessclicks-label-hint">({i18n.siteIdHint || 'Default: 1'})</span>
+                                </label>
+                                <LessclicksInput
+                                    id="lessclicks-site-id"
                                     type="number"
                                     compact={true}
                                     bind:value={settings.site_id}
@@ -696,49 +654,49 @@ onMount(() => {
                                 />
                             </div>
 
-                            <div class="dashlytics-form-group dashlytics-form-group--grow">
-                                <label class="dashlytics-label" for="dashlytics-auth-token">
-                                    {i18n.authToken || 'Auth Token'}
-                                    <span class="dashlytics-label-hint">
+                            <div class="lessclicks-form-group lessclicks-form-group--grow">
+                                <label class="lessclicks-label" for="lessclicks-auth-token">
+                                    {i18n.authToken || 'Auth token'}
+                                    <span class="lessclicks-label-hint">
                                         {#if autoConnected && settings.token_auth}
-                                            ({i18n.autoDetected || 'automatisch erkannt'})
+                                            ({i18n.autoDetected || 'detected automatically'})
                                         {:else if autoConnected && !settings.token_auth}
-                                            ({i18n.wpAuth || 'WordPress Authentifizierung'})
+                                            ({i18n.authActive || 'Authentication active'})
                                         {:else}
-                                            ({i18n.apiAccessToken || 'API Zugriffstoken'})
+                                            ({i18n.apiAccessToken || 'API access token'})
                                         {/if}
                                     </span>
                                 </label>
-                                <div class="dashlytics-input-group">
+                                <div class="lessclicks-input-group">
                                     <input 
                                         type={autoConnected && !settings.token_auth ? 'password' : 'text'}
-                                        class="dashlytics-input" 
-                                        class:dashlytics-input--readonly={autoConnected || (matomoDetected.installed && settings.token_auth)}
+                                        class="lessclicks-input" 
+                                        class:lessclicks-input--readonly={autoConnected || (matomoDetected.installed && settings.token_auth)}
                                         value={autoConnected && !settings.token_auth
                                             ? (showToken ? wpAuthPlaceholder : maskToken(wpAuthPlaceholder))
                                             : (showToken ? settings.token_auth : (settings.token_auth ? maskToken(settings.token_auth) : ''))
                                         }
-                                        placeholder={i18n.authTokenPlaceholder || 'Ihr Matomo API Token'}
+                                        placeholder={i18n.authTokenPlaceholder || 'Your Matomo API token'}
                                         readonly={autoConnected || (matomoDetected.installed && settings.token_auth)}
                                         on:input={(e) => { if (!autoConnected && !(matomoDetected.installed && settings.token_auth)) settings.token_auth = e.target.value; }}
                                     />
                                     <button 
                                         type="button"
-                                        class="dashlytics-btn dashlytics-btn--icon"
+                                        class="lessclicks-btn lessclicks-btn--icon"
                                         on:click={() => showToken = !showToken}
-                                        title={showToken ? (i18n.hideToken || 'Token verbergen') : (i18n.showToken || 'Token anzeigen')}
+                                        title={showToken ? (i18n.hideToken || 'Hide token') : (i18n.showToken || 'Show token')}
                                     >
                                         <span class="dashicons" class:dashicons-visibility={!showToken} class:dashicons-hidden={showToken}></span>
                                     </button>
                                     {#if matomoDetected.installed && !autoConnected && !settings.token_auth}
                                         <button 
                                             type="button"
-                                            class="dashlytics-btn dashlytics-btn--secondary"
+                                            class="lessclicks-btn lessclicks-btn--secondary"
                                             on:click={detectToken}
-                                            title={i18n.autoDetect || 'Token automatisch erkennen'}
+                                            title={i18n.autoDetect || 'Detect token automatically'}
                                         >
                                             <span class="dashicons dashicons-search" aria-hidden="true"></span>
-                                            <span class="screen-reader-text">{i18n.autoDetect || 'Token automatisch erkennen'}</span>
+                                            <span class="screen-reader-text">{i18n.autoDetect || 'Detect token automatically'}</span>
                                         </button>
                                     {/if}
                                 </div>
@@ -746,50 +704,50 @@ onMount(() => {
                         </div>
 
                         {#if connectionMessage}
-                            <div class="dashlytics-alert dashlytics-alert--inline" class:dashlytics-alert--success={connectionStatus === 'success'} class:dashlytics-alert--error={connectionStatus === 'error'}>
-                                <span class="dashlytics-alert-icon">
+                            <div class="lessclicks-alert lessclicks-alert--inline" class:lessclicks-alert--success={connectionStatus === 'success'} class:lessclicks-alert--error={connectionStatus === 'error'}>
+                                <span class="lessclicks-alert-icon">
                                     <span class="dashicons" class:dashicons-yes={connectionStatus === 'success'} class:dashicons-no={connectionStatus === 'error'} aria-hidden="true"></span>
                                 </span>
-                                <div class="dashlytics-alert-content">
+                                <div class="lessclicks-alert-content">
                                     <p>{connectionMessage}</p>
                                 </div>
                             </div>
                         {/if}
 
-                        <div class="dashlytics-form-group">
-                            <span class="dashlytics-label" id="dashlytics-chart-type-label">{i18n.chartType || 'Diagramm-Typ'}</span>
-                            <div class="dashlytics-chart-types">
+                        <div class="lessclicks-form-group">
+                            <span class="lessclicks-label" id="lessclicks-chart-type-label">{i18n.chartType || 'Chart-Type'}</span>
+                            <div class="lessclicks-chart-types">
                                 {#each chartTypes as type}
-                                    <label class="dashlytics-chart-type" class:active={settings.chart_type === type.value}>
+                                    <label class="lessclicks-chart-type" class:active={settings.chart_type === type.value}>
                                         <input 
                                             type="radio" 
                                             name="chart_type" 
                                             value={type.value}
                                             bind:group={settings.chart_type}
                                         />
-                                        <span class="dashlytics-chart-type-icon dashicons {type.iconClass}" aria-hidden="true"></span>
-                                        <span class="dashlytics-chart-type-label">{type.label}</span>
+                                        <span class="lessclicks-chart-type-icon dashicons {type.iconClass}" aria-hidden="true"></span>
+                                        <span class="lessclicks-chart-type-label">{type.label}</span>
                                     </label>
                                 {/each}
                             </div>
                         </div>
 
-                        <div class="dashlytics-form-row">
-                            <div class="dashlytics-form-group">
-                                <label class="dashlytics-label" for="dashlytics-chart-color">{i18n.primaryColor || 'Hauptfarbe'}</label>
-                                <div class="dashlytics-color-picker">
-                                    <input id="dashlytics-chart-color" 
+                        <div class="lessclicks-form-row">
+                            <div class="lessclicks-form-group">
+                                <label class="lessclicks-label" for="lessclicks-chart-color">{i18n.primaryColor || 'Main color'}</label>
+                                <div class="lessclicks-color-picker">
+                                    <input id="lessclicks-chart-color" 
                                         type="color" 
-                                        class="dashlytics-color-input"
+                                        class="lessclicks-color-input"
                                         bind:value={settings.chart_color}
                                     />
-                                    <span class="dashlytics-color-value">{settings.chart_color}</span>
+                                    <span class="lessclicks-color-value">{settings.chart_color}</span>
                                 </div>
                             </div>
 
-                            <div class="dashlytics-form-group">
-                                <label class="dashlytics-label" for="dashlytics-date-range">{i18n.defaultPeriod || 'Standard Zeitraum'}</label>
-                                <select id="dashlytics-date-range" class="dashlytics-select" bind:value={settings.date_range}>
+                            <div class="lessclicks-form-group">
+                                <label class="lessclicks-label" for="lessclicks-date-range">{i18n.defaultPeriod || 'Initial Date filter'}</label>
+                                <select id="lessclicks-date-range" class="lessclicks-select" bind:value={settings.date_range}>
                                     {#each dateRanges as range}
                                         <option value={range.value}>{range.label}</option>
                                     {/each}
@@ -797,56 +755,56 @@ onMount(() => {
                             </div>
                         </div>
                     </div>
-                    <div class="dashlytics-card-footer dashlytics-card-footer--sticky">
+                    <div class="lessclicks-card-footer lessclicks-card-footer--sticky">
                         {#if connectionStatus !== null}
                             <button 
                                 type="button"
-                                class="dashlytics-btn dashlytics-btn--tertiary"
+                                class="lessclicks-btn lessclicks-btn--tertiary"
                                 on:click={resetConnectionTest}
-                                title={i18n.resetConnectionTest || 'Verbindungstest zurücksetzen'}
+                                title={i18n.resetConnectionTest || 'Reset connection status'}
                             >
                                 <span class="dashicons dashicons-undo" aria-hidden="true"></span>
-                                {i18n.reset || 'Zurücksetzen'}
+                                {i18n.reset || 'Reset'}
                             </button>
                         {/if}
                         <button 
-                            class="dashlytics-btn dashlytics-btn--primary"
+                            class="lessclicks-btn lessclicks-btn--primary"
                             on:click={saveSettings}
                             disabled={saving}
-                            class:dashlytics-btn--loading={saving}
+                            class:lessclicks-btn--loading={saving}
                             aria-busy={saving}
                             aria-live="polite"
                         >
                             {#if saving}
-                                <span class="dashlytics-btn-spinner" aria-hidden="true"></span>
+                                <span class="lessclicks-btn-spinner" aria-hidden="true"></span>
                             {:else}
                                 <span class="dashicons dashicons-saved" aria-hidden="true"></span>
                             {/if}
-                            {i18n.save || 'Speichern'}
+                            {i18n.save || 'Save'}
                         </button>
                     </div>
                 </div>
 
                 <!-- Live Preview -->
-                <div class="dashlytics-card">
-                    <div class="dashlytics-card-header">
-                        <h2 class="dashlytics-card-title">
-                            <span class="dashlytics-card-icon"><span class="dashicons dashicons-visibility" aria-hidden="true"></span></span>
-                            {i18n.livePreview || 'Live Vorschau'}
+                <div class="lessclicks-card">
+                    <div class="lessclicks-card-header">
+                        <h2 class="lessclicks-card-title">
+                            <span class="lessclicks-card-icon"><span class="dashicons dashicons-visibility" aria-hidden="true"></span></span>
+                            {i18n.livePreview || 'Live preview'}
                         </h2>
                     </div>
-                    <div class="dashlytics-card-body">
-                        <div class="dashlytics-preview dashlytics-preview--live">
-                            <div class="dashlytics-preview-chart dashlytics-preview-chart--canvas" aria-live="polite">
+                    <div class="lessclicks-card-body">
+                        <div class="lessclicks-preview lessclicks-preview--live">
+                            <div class="lessclicks-preview-chart lessclicks-preview-chart--canvas" aria-live="polite">
                                 {#if previewLoading}
-                                    <div class="dashlytics-preview-status" role="status">
-                                        <span class="dashlytics-preview-spinner" aria-hidden="true"></span>
-                                        {i18n.loadingPreview || 'Lade Vorschau…'}
+                                    <div class="lessclicks-preview-status" role="status">
+                                        <span class="lessclicks-preview-spinner" aria-hidden="true"></span>
+                                        {i18n.loadingPreview || 'Loading preview…'}
                                     </div>
                                 {:else if previewError || !previewData.length}
-                                    <div class="dashlytics-preview-status">{i18n.noPreviewData || 'Keine Vorschaudaten'}</div>
+                                    <div class="lessclicks-preview-status">{i18n.noPreviewData || 'No preview data'}</div>
                                 {:else}
-                                    <canvas bind:this={previewCanvas} class="dashlytics-preview-canvas"></canvas>
+                                    <canvas bind:this={previewCanvas} class="lessclicks-preview-canvas"></canvas>
                                 {/if}
                             </div>
                         </div>
@@ -857,103 +815,103 @@ onMount(() => {
 
         <!-- Help Tab -->
         {#if activeTab === 'help'}
-            <div class="dashlytics-grid">
-                <div class="dashlytics-card">
-                    <div class="dashlytics-card-header">
-                        <h2 class="dashlytics-card-title">
-                            <span class="dashlytics-card-icon"><span class="dashicons dashicons-book-alt" aria-hidden="true"></span></span>
-                            {i18n.quickstart || 'Schnellstart Anleitung'}
+            <div class="lessclicks-grid">
+                <div class="lessclicks-card">
+                    <div class="lessclicks-card-header">
+                        <h2 class="lessclicks-card-title">
+                            <span class="lessclicks-card-icon"><span class="dashicons dashicons-book-alt" aria-hidden="true"></span></span>
+                            {i18n.quickstart || 'Quick start'}
                         </h2>
                     </div>
-                    <div class="dashlytics-card-body">
-                        <div class="dashlytics-help-steps">
+                    <div class="lessclicks-card-body">
+                        <div class="lessclicks-help-steps">
                             {#if matomoDetected.installed}
                                 <!-- Simplified guide for Matomo for WordPress -->
-                                <div class="dashlytics-help-step">
-                                    <span class="dashlytics-help-step-number">1</span>
-                                    <div class="dashlytics-help-step-content">
-                                        <strong>{i18n.connectAutomatically || 'Automatisch verbinden'}</strong>
-                                        <p>{i18n.connectAutomaticallyHelp || 'Matomo for WordPress wurde erkannt! Klicken Sie oben auf "Automatisch verbinden" - Dashlytics übernimmt alle Einstellungen automatisch.'}</p>
+                                <div class="lessclicks-help-step">
+                                    <span class="lessclicks-help-step-number">1</span>
+                                    <div class="lessclicks-help-step-content">
+                                        <strong>{i18n.connectAutomatically || 'Connect automatically'}</strong>
+                                        <p>{i18n.connectAutomaticallyHelp || 'Matomo for WordPress is detected. Lessclicks connects automatically and adopts the settings.'}</p>
                                     </div>
                                 </div>
-                                <div class="dashlytics-help-step">
-                                    <span class="dashlytics-help-step-number">2</span>
-                                    <div class="dashlytics-help-step-content">
-                                        <strong>{i18n.useDashboardWidget || 'Dashboard Widget nutzen'}</strong>
-                                        <p>{i18n.useDashboardWidgetHelp || 'Nach der Verbindung erscheint das Statistik-Widget auf Ihrem WordPress Dashboard. Sie können Zeitraum, Diagramm-Typ und Farbe direkt im Widget anpassen.'}</p>
+                                <div class="lessclicks-help-step">
+                                    <span class="lessclicks-help-step-number">2</span>
+                                    <div class="lessclicks-help-step-content">
+                                        <strong>{i18n.useDashboardWidget || 'Use the dashboard widget'}</strong>
+                                        <p>{i18n.useDashboardWidgetHelp || 'After connecting, the analytics widget appears on the WordPress dashboard. Adjust the period, chart type and color in the widget.'}</p>
                                     </div>
                                 </div>
-                                <div class="dashlytics-help-step">
-                                    <span class="dashlytics-help-step-number">3</span>
-                                    <div class="dashlytics-help-step-content">
-                                        <strong>{i18n.exportReports || 'Reports exportieren'}</strong>
-                                        <p>{i18n.exportReportsHelp || 'Nutzen Sie den "Report" Button im Widget um Ihre Statistiken als PDF-Bericht oder PNG-Bild zu exportieren.'}</p>
+                                <div class="lessclicks-help-step">
+                                    <span class="lessclicks-help-step-number">3</span>
+                                    <div class="lessclicks-help-step-content">
+                                        <strong>{i18n.exportReports || 'Export reports'}</strong>
+                                        <p>{i18n.exportReportsHelp || 'Use the Report button in the widget to export your statistics as a PDF or PNG.'}</p>
                                     </div>
                                 </div>
                             {:else}
                                 <!-- Guide for external Matomo installation -->
-                                <div class="dashlytics-help-step">
-                                    <span class="dashlytics-help-step-number">1</span>
-                                    <div class="dashlytics-help-step-content">
-                                        <strong>{i18n.installMfW || 'Matomo for WordPress installieren'}</strong>
-                                        <p>{i18n.installMfWHelp || 'Für die beste Integration installieren Sie das kostenlose "Matomo Analytics" Plugin aus dem WordPress Plugin-Verzeichnis.'}</p>
+                                <div class="lessclicks-help-step">
+                                    <span class="lessclicks-help-step-number">1</span>
+                                    <div class="lessclicks-help-step-content">
+                                        <strong>{i18n.installMfW || 'Install Matomo for WordPress'}</strong>
+                                        <p>{i18n.installMfWHelp || 'For the best integration, install the free Matomo Analytics plugin from the WordPress plugin directory.'}</p>
                                     </div>
                                 </div>
-                                <div class="dashlytics-help-step">
-                                    <span class="dashlytics-help-step-number">2</span>
-                                    <div class="dashlytics-help-step-content">
-                                        <strong>{i18n.externalMfW || 'Alternative: Externe Matomo Installation'}</strong>
-                                        <p>{i18n.externalMfWHelp || 'Falls Sie Matomo extern hosten, tragen Sie Ihre Matomo-URL, Site-ID und einen API-Token unter "Verbindung" ein.'}</p>
+                                <div class="lessclicks-help-step">
+                                    <span class="lessclicks-help-step-number">2</span>
+                                    <div class="lessclicks-help-step-content">
+                                        <strong>{i18n.externalMfW || 'Alternative: external Matomo'}</strong>
+                                        <p>{i18n.externalMfWHelp || 'If you host Matomo externally, enter the Matomo URL, Site ID and API token under Chart Settings.'}</p>
                                     </div>
                                 </div>
-                                <div class="dashlytics-help-step">
-                                    <span class="dashlytics-help-step-number">3</span>
-                                    <div class="dashlytics-help-step-content">
-                                        <strong>{i18n.testConnection || 'Verbindung testen'}</strong>
-                                        <p>{i18n.testConnectionHelp || 'Klicken Sie auf "Verbindung testen" um sicherzustellen, dass alles funktioniert.'}</p>
+                                <div class="lessclicks-help-step">
+                                    <span class="lessclicks-help-step-number">3</span>
+                                    <div class="lessclicks-help-step-content">
+                                        <strong>{i18n.testConnection || 'Check the connection'}</strong>
+                                        <p>{i18n.testConnectionHelp || 'Save the settings and check the connection status at the top of this page.'}</p>
                                     </div>
                                 </div>
                             {/if}
                         </div>
 
                         <!-- Features overview -->
-                        <div class="dashlytics-features-section">
-                            <h3 class="dashlytics-features-title">{i18n.widgetFeatures || 'Widget Funktionen'}</h3>
-                            <div class="dashlytics-feature-cards">
-                                <div class="dashlytics-feature-card">
-                                    <div class="dashlytics-feature-card-icon">
+                        <div class="lessclicks-features-section">
+                            <h3 class="lessclicks-features-title">{i18n.widgetFeatures || 'Widget features'}</h3>
+                            <div class="lessclicks-feature-cards">
+                                <div class="lessclicks-feature-card">
+                                    <div class="lessclicks-feature-card-icon">
                                         <span class="dashicons dashicons-chart-bar" aria-hidden="true"></span>
                                     </div>
-                                    <div class="dashlytics-feature-card-content">
-                                        <h4>{i18n.statsCards || 'Statistik-Karten'}</h4>
-                                        <p>{i18n.statsCardsDesc || 'Besucher, Seitenaufrufe, Absprungrate und Verweildauer auf einen Blick'}</p>
+                                    <div class="lessclicks-feature-card-content">
+                                        <h4>{i18n.statsCards || 'Stats cards'}</h4>
+                                        <p>{i18n.statsCardsDesc || 'Visitors, page views, bounce rate and session duration at a glance.'}</p>
                                     </div>
                                 </div>
-                                <div class="dashlytics-feature-card">
-                                    <div class="dashlytics-feature-card-icon">
+                                <div class="lessclicks-feature-card">
+                                    <div class="lessclicks-feature-card-icon">
                                         <span class="dashicons dashicons-chart-line"></span>
                                     </div>
-                                    <div class="dashlytics-feature-card-content">
-                                        <h4>{i18n.interactiveCharts || 'Interaktive Charts'}</h4>
-                                        <p>{i18n.interactiveChartsDesc || 'Linie, Balken oder Kreis - wählen Sie Ihre Darstellung'}</p>
+                                    <div class="lessclicks-feature-card-content">
+                                        <h4>{i18n.interactiveCharts || 'Interactive charts'}</h4>
+                                        <p>{i18n.interactiveChartsDesc || 'Line, bar or pie chart.'}</p>
                                     </div>
                                 </div>
-                                <div class="dashlytics-feature-card">
-                                    <div class="dashlytics-feature-card-icon">
+                                <div class="lessclicks-feature-card">
+                                    <div class="lessclicks-feature-card-icon">
                                         <span class="dashicons dashicons-calendar-alt"></span>
                                     </div>
-                                    <div class="dashlytics-feature-card-content">
-                                        <h4>{i18n.flexiblePeriod || 'Flexibler Zeitraum'}</h4>
-                                        <p>{i18n.flexiblePeriodDesc || 'Beliebigen Zeitraum per Datumswahl im Widget auswählen'}</p>
+                                    <div class="lessclicks-feature-card-content">
+                                        <h4>{i18n.flexiblePeriod || 'Flexible period'}</h4>
+                                        <p>{i18n.flexiblePeriodDesc || 'Pick any period with the date picker in the widget.'}</p>
                                     </div>
                                 </div>
-                                <div class="dashlytics-feature-card">
-                                    <div class="dashlytics-feature-card-icon">
+                                <div class="lessclicks-feature-card">
+                                    <div class="lessclicks-feature-card-icon">
                                         <span class="dashicons dashicons-download"></span>
                                     </div>
-                                    <div class="dashlytics-feature-card-content">
-                                        <h4>{i18n.exportReady || 'PDF & PNG Export'}</h4>
-                                        <p>{i18n.exportReadyDesc || 'Statistiken als professionellen Report oder Bild exportieren'}</p>
+                                    <div class="lessclicks-feature-card-content">
+                                        <h4>{i18n.exportReady || 'PDF & PNG export'}</h4>
+                                        <p>{i18n.exportReadyDesc || 'Download statistics as a PDF report or PNG image.'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -962,33 +920,33 @@ onMount(() => {
                     </div>
                 </div>
 
-                <div class="dashlytics-card">
-                    <div class="dashlytics-card-header">
-                        <h2 class="dashlytics-card-title">
-                            <span class="dashlytics-card-icon"><span class="dashicons dashicons-heart" aria-hidden="true"></span></span>
-                            {i18n.supportTitle || 'Matt Interfaces unterstützen'}
+                <div class="lessclicks-card">
+                    <div class="lessclicks-card-header">
+                        <h2 class="lessclicks-card-title">
+                            <span class="lessclicks-card-icon"><span class="dashicons dashicons-heart" aria-hidden="true"></span></span>
+                            {i18n.supportTitle || 'Support Matt Interfaces'}
                         </h2>
                     </div>
-                    <div class="dashlytics-card-body">
-                        <p class="dashlytics-desc">{i18n.supportDesc || 'Dieses Plugin ist kostenlos. Eine Spende oder eine Bewertung hilft bei der Weiterentwicklung.'}</p>
-                        <div class="dashlytics-support">
-                            <a href="https://matt-interfaces.ch/wp-dashlytics" target="_blank" rel="noopener noreferrer" class="dashlytics-support-link" aria-label="Plugin-Seite für Dashlytics - Matomo Analytics Widget besuchen">
+                    <div class="lessclicks-card-body">
+                        <p class="lessclicks-desc">{i18n.supportDesc || 'This plugin is free. A donation or a review helps with further development.'}</p>
+                        <div class="lessclicks-support">
+                            <a href="https://matt-interfaces.ch/lessclicks" target="_blank" rel="noopener noreferrer" class="lessclicks-support-link" aria-label={i18n.pluginWebsiteAria || 'Visit the Lessclicks Analytics for Matomo plugin page'}>
                                 <span class="dashicons dashicons-admin-site-alt3" aria-hidden="true"></span>
-                                <span>{i18n.pluginWebsite || 'Plugin-Website'}</span>
+                                <span>{i18n.pluginWebsite || 'Plugin website'}</span>
                             </a>
-                            <a href="https://github.com/Matt-Interfaces/wp-dashlytics" target="_blank" rel="noopener noreferrer" class="dashlytics-support-link" aria-label="GitHub Repository für Dashlytics öffnen">
+                            <a href="https://github.com/Matt-Interfaces/lessclicks" target="_blank" rel="noopener noreferrer" class="lessclicks-support-link" aria-label={i18n.githubRepositoryAria || 'Open the Lessclicks GitHub repository'}>
                                 <span class="dashicons dashicons-editor-code" aria-hidden="true"></span>
-                                <span>{i18n.githubRepository || 'GitHub Repository'}</span>
+                                <span>{i18n.githubRepository || 'GitHub repository'}</span>
                             </a>
-                            <a href="https://developer.matomo.org/api-reference/reporting-api" target="_blank" rel="noopener noreferrer" class="dashlytics-support-link" >
+                            <a href="https://developer.matomo.org/api-reference/reporting-api" target="_blank" rel="noopener noreferrer" class="lessclicks-support-link" >
                                 <span class="dashicons dashicons-book-alt" aria-hidden="true"></span>
-                                <span>{i18n.matomoApiDocs || 'Matomo API Docs'}</span>
+                                <span>{i18n.matomoApiDocs || 'Matomo API docs'}</span>
                             </a>
-                            <a href="https://matt-interfaces.ch/zahlen" target="_blank" rel="noopener noreferrer" class="dashlytics-support-link" >
+                            <a href="https://matt-interfaces.ch/zahlen" target="_blank" rel="noopener noreferrer" class="lessclicks-support-link" >
                                 <span class="dashicons dashicons-heart" aria-hidden="true"></span>
-                                <span>{i18n.supportDeveloper || 'Entwickler unterstützen'}</span>
+                                <span>{i18n.supportDeveloper || 'Support the developer'}</span>
                             </a>
-                            <a href="https://matt-interfaces.ch" target="_blank" rel="noopener noreferrer" class="dashlytics-support-link">
+                            <a href="https://matt-interfaces.ch" target="_blank" rel="noopener noreferrer" class="lessclicks-support-link">
                                 <span class="dashicons dashicons-admin-links" aria-hidden="true"></span>
                                 <span>matt-interfaces.ch</span>
                             </a>
@@ -1003,24 +961,24 @@ onMount(() => {
 
     <!-- Toast Notification -->
     {#if toast}
-        <div class="dashlytics-toast" class:dashlytics-toast--success={toast.type === 'success'} class:dashlytics-toast--error={toast.type === 'error'}>
+        <div class="lessclicks-toast" class:lessclicks-toast--success={toast.type === 'success'} class:lessclicks-toast--error={toast.type === 'error'}>
             {toast.message}
     </div>
     {/if}
 </div>
 
 <style>
-    .dashlytics-chart-type input {
+    .lessclicks-chart-type input {
         display: none;
     }
 
-    .dashlytics-preview-chart--canvas {
+    .lessclicks-preview-chart--canvas {
         position: relative;
         width: 100%;
         height: 240px;
     }
 
-    .dashlytics-preview-canvas {
+    .lessclicks-preview-canvas {
         position: absolute;
         top: 0;
         left: 0;

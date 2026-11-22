@@ -2,7 +2,7 @@
 /**
  * Main plugin class
  */
-class Dashlytics {
+class Lessclicks {
 
 	/**
 	 * Singleton instance
@@ -12,7 +12,12 @@ class Dashlytics {
 	/**
 	 * Option name for settings
 	 */
-	const OPTION_NAME = 'dashlytics_settings';
+	const OPTION_NAME = 'lessclicks_settings';
+
+	/**
+	 * Option name used before the plugin was renamed to Lessclicks.
+	 */
+	const LEGACY_OPTION_NAME = 'dashlytics_settings';
 
 	/**
 	 * Singleton pattern
@@ -43,14 +48,14 @@ class Dashlytics {
 
 		// REST API
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
-		add_action( 'wp_ajax_dashlytics_review_snooze', array( $this, 'ajax_review_snooze' ) );
+		add_action( 'wp_ajax_lessclicks_review_snooze', array( $this, 'ajax_review_snooze' ) );
 
 		// Plugin activation/deactivation
-		register_activation_hook( DASHLYTICS_PLUGIN_FILE, array( $this, 'activate' ) );
-		register_deactivation_hook( DASHLYTICS_PLUGIN_FILE, array( $this, 'deactivate' ) );
+		register_activation_hook( LESSCLICKS_PLUGIN_FILE, array( $this, 'activate' ) );
+		register_deactivation_hook( LESSCLICKS_PLUGIN_FILE, array( $this, 'deactivate' ) );
 
 		// Settings link on the Plugins list
-		add_filter( 'plugin_action_links_' . DASHLYTICS_PLUGIN_BASENAME, array( $this, 'add_settings_link' ) );
+		add_filter( 'plugin_action_links_' . LESSCLICKS_PLUGIN_BASENAME, array( $this, 'add_settings_link' ) );
 
 		// Review notice dismiss/snooze handler
 		add_action( 'admin_init', array( $this, 'snooze_review_notice' ) );
@@ -88,14 +93,14 @@ class Dashlytics {
 		// Add capabilities
 		$role = get_role( 'administrator' );
 		if ( $role ) {
-			$role->add_cap( 'manage_dashlytics' );
+			$role->add_cap( 'manage_lessclicks' );
 		}
 
 		flush_rewrite_rules();
 
 		// Reset review notice timer (show again in 14 days)
-		delete_option( 'dashlytics_review_dismissed' );
-		update_option( 'dashlytics_review_next', time() + ( 14 * DAY_IN_SECONDS ) );
+		delete_option( 'lessclicks_review_dismissed' );
+		update_option( 'lessclicks_review_next', time() + ( 14 * DAY_IN_SECONDS ) );
 	}
 
 	/**
@@ -109,8 +114,8 @@ class Dashlytics {
 	 * Add settings link to the plugins list
 	 */
 	public function add_settings_link( $links ) {
-		$settings_link = '<a href="' . admin_url( 'admin.php?page=dashlytics' ) . '">' .
-						__( 'Einstellungen', 'dashlytics-matomo-analytics-widget' ) . '</a>';
+		$settings_link = '<a href="' . admin_url( 'admin.php?page=lessclicks' ) . '">' .
+						__( 'Settings', 'lessclicks-analytics-for-matomo' ) . '</a>';
 		array_unshift( $links, $settings_link );
 		return $links;
 	}
@@ -120,12 +125,12 @@ class Dashlytics {
 	 */
 	public function add_admin_menu() {
 		add_menu_page(
-			__( 'Dashlytics Analytics', 'dashlytics-matomo-analytics-widget' ),
-			__( 'Dashlytics', 'dashlytics-matomo-analytics-widget' ),
+			__( 'Lessclicks Analytics', 'lessclicks-analytics-for-matomo' ),
+			__( 'Lessclicks', 'lessclicks-analytics-for-matomo' ),
 			'manage_options',
-			'dashlytics',
+			'lessclicks',
 			array( $this, 'render_settings_page' ),
-			DASHLYTICS_PLUGIN_URL . 'assets/images/dashlytics-icon.svg',
+			LESSCLICKS_PLUGIN_URL . 'assets/images/lessclicks-icon.svg',
 			80
 		);
 	}
@@ -135,83 +140,129 @@ class Dashlytics {
 	 */
 	public function enqueue_admin_scripts( $hook ) {
 		// Settings page
-		if ( 'toplevel_page_dashlytics' === $hook ) {
+		if ( 'toplevel_page_lessclicks' === $hook ) {
 			wp_enqueue_style(
-				'dashlytics-admin',
-				DASHLYTICS_PLUGIN_URL . 'assets/css/admin.css',
+				'lessclicks-admin',
+				LESSCLICKS_PLUGIN_URL . 'assets/css/admin.css',
 				array(),
-				DASHLYTICS_VERSION
+				LESSCLICKS_VERSION
 			);
 
 			wp_enqueue_style(
-				'dashlytics-settings-bundle',
-				DASHLYTICS_PLUGIN_URL . 'app/public/build/bundle.css',
-				array( 'dashlytics-admin' ),
-				DASHLYTICS_VERSION
+				'lessclicks-settings-bundle',
+				LESSCLICKS_PLUGIN_URL . 'app/public/build/bundle.css',
+				array( 'lessclicks-admin' ),
+				LESSCLICKS_VERSION
 			);
 
 			wp_enqueue_script(
-				'dashlytics-settings',
-				DASHLYTICS_PLUGIN_URL . 'app/public/build/settings.js',
+				'lessclicks-settings',
+				LESSCLICKS_PLUGIN_URL . 'app/public/build/settings.js',
 				array(),
-				DASHLYTICS_VERSION,
+				LESSCLICKS_VERSION,
 				true
 			);
 
 			wp_localize_script(
-				'dashlytics-settings',
-				'dashlyticsAdmin',
+				'lessclicks-settings',
+				'lessclicksAdmin',
 				array(
-					'restUrl'        => rest_url( 'dashlytics/v1/' ),
+					'restUrl'        => rest_url( 'lessclicks/v1/' ),
 					'nonce'          => wp_create_nonce( 'wp_rest' ),
 					'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
-					'pluginUrl'      => DASHLYTICS_PLUGIN_URL,
-					'version'        => DASHLYTICS_VERSION,
+					'pluginUrl'      => LESSCLICKS_PLUGIN_URL,
+					'version'        => LESSCLICKS_VERSION,
+					'locale'         => get_user_locale(),
 					'matomoDetected' => $this->detect_matomo_plugin(),
 					'i18n'           => array(
-						'saveSuccess'            => __( 'Dashlytics: Einstellungen gespeichert!', 'dashlytics-matomo-analytics-widget' ),
-						'saveError'              => __( 'Fehler beim Speichern.', 'dashlytics-matomo-analytics-widget' ),
-						'connectionSuccess'      => __( 'Verbindung erfolgreich!', 'dashlytics-matomo-analytics-widget' ),
-						'connectionError'        => __( 'Verbindung fehlgeschlagen.', 'dashlytics-matomo-analytics-widget' ),
-						'tokenGenerated'         => __( 'Token automatisch erkannt!', 'dashlytics-matomo-analytics-widget' ),
-						'line'                   => __( 'Liniendiagramm', 'dashlytics-matomo-analytics-widget' ),
-						'bar'                    => __( 'Balkendiagramm', 'dashlytics-matomo-analytics-widget' ),
-						'pie'                    => __( 'Kreisdiagramm', 'dashlytics-matomo-analytics-widget' ),
-						'last7days'              => __( 'Letzte 7 Tage', 'dashlytics-matomo-analytics-widget' ),
-						'last14days'             => __( 'Letzte 14 Tage', 'dashlytics-matomo-analytics-widget' ),
-						'last30days'             => __( 'Letzte 30 Tage', 'dashlytics-matomo-analytics-widget' ),
-						'last60days'             => __( 'Letzte 60 Tage', 'dashlytics-matomo-analytics-widget' ),
-						'last90days'             => __( 'Letzte 90 Tage', 'dashlytics-matomo-analytics-widget' ),
-						'connection'             => __( 'Verbindung', 'dashlytics-matomo-analytics-widget' ),
-						'settings'               => __( 'Einstellungen', 'dashlytics-matomo-analytics-widget' ),
-						'matomoUrl'              => __( 'Matomo URL', 'dashlytics-matomo-analytics-widget' ),
-						'siteId'                 => __( 'Site ID', 'dashlytics-matomo-analytics-widget' ),
-						'authToken'              => __( 'Auth Token', 'dashlytics-matomo-analytics-widget' ),
-						'autoDetect'             => __( 'Matomo for WordPress automatisch erkennen', 'dashlytics-matomo-analytics-widget' ),
-						'testConnection'         => __( 'Verbindung testen', 'dashlytics-matomo-analytics-widget' ),
-						'useMatomoWP'            => __( 'Matomo for WordPress verwenden', 'dashlytics-matomo-analytics-widget' ),
-						'save'                   => __( 'Speichern', 'dashlytics-matomo-analytics-widget' ),
-						'preview'                => __( 'Vorschau', 'dashlytics-matomo-analytics-widget' ),
-						'statsCards'             => __( 'Statistik-Karten', 'dashlytics-matomo-analytics-widget' ),
-						'statsCardsDesc'         => __( 'Besucher, Seitenaufrufe, Absprungrate und Verweildauer auf einen Blick', 'dashlytics-matomo-analytics-widget' ),
-						'realTimePreview'        => __( 'Echtzeit-Vorschau', 'dashlytics-matomo-analytics-widget' ),
-						'realTimePreviewDesc'    => __( 'Änderungen sofort im Vorschau-Widget sehen', 'dashlytics-matomo-analytics-widget' ),
-						'exportReady'            => __( 'Export-fertig', 'dashlytics-matomo-analytics-widget' ),
-						'exportReadyDesc'        => __( 'Reports als PDF oder PNG herunterladen', 'dashlytics-matomo-analytics-widget' ),
-						'pluginWebsite'          => __( 'Plugin-Website', 'dashlytics-matomo-analytics-widget' ),
-						'osFamilies'             => __( 'OS-Familien', 'dashlytics-matomo-analytics-widget' ),
-						'autoConnected'          => __( 'WordPress Authentifizierung aktiv', 'dashlytics-matomo-analytics-widget' ),
-						'wpAuthActive'           => __( 'WordPress Authentifizierung aktiv', 'dashlytics-matomo-analytics-widget' ),
-						'kpiPreview'             => __( 'KPI Vorschau', 'dashlytics-matomo-analytics-widget' ),
-						'avgSessionDuration'     => __( 'Ø Verweildauer', 'dashlytics-matomo-analytics-widget' ),
-						'avgSessionDurationHint' => __( 'Content-Engagement im Zeitraum', 'dashlytics-matomo-analytics-widget' ),
-						'topTrafficSource'       => __( 'Top Traffic-Quelle', 'dashlytics-matomo-analytics-widget' ),
-						'pagesPerVisit'          => __( 'Seiten/Besuch', 'dashlytics-matomo-analytics-widget' ),
-						'conversionRate'         => __( 'Conversion Rate', 'dashlytics-matomo-analytics-widget' ),
-						'comingSoon'             => __( 'Coming soon', 'dashlytics-matomo-analytics-widget' ),
-						'loadingSettings'        => __( 'Einstellungen werden geladen', 'dashlytics-matomo-analytics-widget' ),
-						'loadingPreview'         => __( 'Lade Vorschau…', 'dashlytics-matomo-analytics-widget' ),
-						'settingsTabs'           => __( 'Einstellungsbereiche', 'dashlytics-matomo-analytics-widget' ),
+						'tagline'                  => __( 'Matomo widget dashboard for WordPress', 'lessclicks-analytics-for-matomo' ),
+						'saveSuccess'              => __( 'Settings saved.', 'lessclicks-analytics-for-matomo' ),
+						'saveError'                => __( 'Could not save settings.', 'lessclicks-analytics-for-matomo' ),
+						'connectionSuccess'        => __( 'Connection successful.', 'lessclicks-analytics-for-matomo' ),
+						'connectionError'          => __( 'Connection failed.', 'lessclicks-analytics-for-matomo' ),
+						'tokenGenerated'           => __( 'Token detected automatically.', 'lessclicks-analytics-for-matomo' ),
+						'line'                     => __( 'Line chart', 'lessclicks-analytics-for-matomo' ),
+						'bar'                      => __( 'Bar chart', 'lessclicks-analytics-for-matomo' ),
+						'pie'                      => __( 'Pie chart', 'lessclicks-analytics-for-matomo' ),
+						'last7days'                => __( 'Last 7 days', 'lessclicks-analytics-for-matomo' ),
+						'last14days'               => __( 'Last 14 days', 'lessclicks-analytics-for-matomo' ),
+						'last30days'               => __( 'Last 30 days', 'lessclicks-analytics-for-matomo' ),
+						'last60days'               => __( 'Last 60 days', 'lessclicks-analytics-for-matomo' ),
+						'last90days'               => __( 'Last 90 days', 'lessclicks-analytics-for-matomo' ),
+						'settings'                 => __( 'Settings', 'lessclicks-analytics-for-matomo' ),
+						'help'                     => __( 'Help', 'lessclicks-analytics-for-matomo' ),
+						'chartSettings'            => __( 'Chart Settings', 'lessclicks-analytics-for-matomo' ),
+						'matomoUrl'                => __( 'Matomo URL', 'lessclicks-analytics-for-matomo' ),
+						'matomoUrlHint'            => __( 'Your Matomo installation', 'lessclicks-analytics-for-matomo' ),
+						'matomoUrlPlaceholder'     => __( 'https://analytics.example.com', 'lessclicks-analytics-for-matomo' ),
+						'siteId'                   => __( 'Site ID', 'lessclicks-analytics-for-matomo' ),
+						'siteIdHint'               => __( 'Default: 1', 'lessclicks-analytics-for-matomo' ),
+						'authToken'                => __( 'Auth token', 'lessclicks-analytics-for-matomo' ),
+						'authTokenPlaceholder'     => __( 'Your Matomo API token', 'lessclicks-analytics-for-matomo' ),
+						'autoDetected'             => __( 'detected automatically', 'lessclicks-analytics-for-matomo' ),
+						'authActive'               => __( 'Authentication active', 'lessclicks-analytics-for-matomo' ),
+						'apiAccessToken'           => __( 'API access token', 'lessclicks-analytics-for-matomo' ),
+						'hideToken'                => __( 'Hide token', 'lessclicks-analytics-for-matomo' ),
+						'showToken'                => __( 'Show token', 'lessclicks-analytics-for-matomo' ),
+						'autoDetect'               => __( 'Detect token automatically', 'lessclicks-analytics-for-matomo' ),
+						'useMatomoWp'              => __( 'Use Matomo for WordPress', 'lessclicks-analytics-for-matomo' ),
+						'chartType'                => __( 'Chart-Type', 'lessclicks-analytics-for-matomo' ),
+						'primaryColor'             => __( 'Main color', 'lessclicks-analytics-for-matomo' ),
+						'defaultPeriod'            => __( 'Initial Date filter', 'lessclicks-analytics-for-matomo' ),
+						'reset'                    => __( 'Reset', 'lessclicks-analytics-for-matomo' ),
+						'resetConnectionTest'      => __( 'Reset connection status', 'lessclicks-analytics-for-matomo' ),
+						'save'                     => __( 'Save', 'lessclicks-analytics-for-matomo' ),
+						'livePreview'              => __( 'Live preview', 'lessclicks-analytics-for-matomo' ),
+						'loadingPreview'           => __( 'Loading preview…', 'lessclicks-analytics-for-matomo' ),
+						'noPreviewData'            => __( 'No preview data', 'lessclicks-analytics-for-matomo' ),
+						'loadingSettings'          => __( 'Loading settings', 'lessclicks-analytics-for-matomo' ),
+						'settingsTabs'             => __( 'Settings sections', 'lessclicks-analytics-for-matomo' ),
+						'checking'                 => __( 'Checking connection…', 'lessclicks-analytics-for-matomo' ),
+						'matomoWp'                 => __( 'Matomo WP', 'lessclicks-analytics-for-matomo' ),
+						'connected'                => __( 'Connected', 'lessclicks-analytics-for-matomo' ),
+						'notConnected'             => __( 'Not connected', 'lessclicks-analytics-for-matomo' ),
+						'configurationRequired'    => __( 'Configuration required', 'lessclicks-analytics-for-matomo' ),
+						'autoConnected'            => __( 'WordPress authentication active', 'lessclicks-analytics-for-matomo' ),
+						'autoConnectedToken'       => __( 'Connected to Matomo for WordPress automatically (token detected).', 'lessclicks-analytics-for-matomo' ),
+						'autoConnectionFailed'     => __( 'Automatic connection failed.', 'lessclicks-analytics-for-matomo' ),
+						'noAuthMethod'             => __( 'Could not detect a valid authentication method.', 'lessclicks-analytics-for-matomo' ),
+						'connectionErrorManual'    => __( 'Connection failed. Configure Matomo manually.', 'lessclicks-analytics-for-matomo' ),
+						'wpAuthUsed'               => __( 'WordPress authentication is used.', 'lessclicks-analytics-for-matomo' ),
+						'detectTokenFailed'        => __( 'Token detection failed.', 'lessclicks-analytics-for-matomo' ),
+						'mfWNotInstalled'          => __( 'Matomo for WordPress is not installed.', 'lessclicks-analytics-for-matomo' ),
+						'previewError'             => __( 'Could not load the preview.', 'lessclicks-analytics-for-matomo' ),
+						'visits'                   => __( 'Visits', 'lessclicks-analytics-for-matomo' ),
+						'osFamilies'               => __( 'Operating system families', 'lessclicks-analytics-for-matomo' ),
+						'quickstart'               => __( 'Quick start', 'lessclicks-analytics-for-matomo' ),
+						'connectAutomatically'     => __( 'Connect automatically', 'lessclicks-analytics-for-matomo' ),
+						'connectAutomaticallyHelp' => __( 'Matomo for WordPress is detected. Lessclicks connects automatically and adopts the settings.', 'lessclicks-analytics-for-matomo' ),
+						'useDashboardWidget'       => __( 'Use the dashboard widget', 'lessclicks-analytics-for-matomo' ),
+						'useDashboardWidgetHelp'   => __( 'After connecting, the analytics widget appears on the WordPress dashboard. Adjust the period, chart type and color in the widget.', 'lessclicks-analytics-for-matomo' ),
+						'exportReports'            => __( 'Export reports', 'lessclicks-analytics-for-matomo' ),
+						'exportReportsHelp'        => __( 'Use the Report button in the widget to export your statistics as a PDF or PNG.', 'lessclicks-analytics-for-matomo' ),
+						'installMfW'               => __( 'Install Matomo for WordPress', 'lessclicks-analytics-for-matomo' ),
+						'installMfWHelp'           => __( 'For the best integration, install the free Matomo Analytics plugin from the WordPress plugin directory.', 'lessclicks-analytics-for-matomo' ),
+						'externalMfW'              => __( 'Alternative: external Matomo', 'lessclicks-analytics-for-matomo' ),
+						'externalMfWHelp'          => __( 'If you host Matomo externally, enter the Matomo URL, Site ID and API token under Chart Settings.', 'lessclicks-analytics-for-matomo' ),
+						'testConnection'           => __( 'Check the connection', 'lessclicks-analytics-for-matomo' ),
+						'testConnectionHelp'       => __( 'Save the settings and check the connection status at the top of this page.', 'lessclicks-analytics-for-matomo' ),
+						'widgetFeatures'           => __( 'Widget features', 'lessclicks-analytics-for-matomo' ),
+						'statsCards'               => __( 'Stats cards', 'lessclicks-analytics-for-matomo' ),
+						'statsCardsDesc'           => __( 'Visitors, page views, bounce rate and session duration at a glance.', 'lessclicks-analytics-for-matomo' ),
+						'interactiveCharts'        => __( 'Interactive charts', 'lessclicks-analytics-for-matomo' ),
+						'interactiveChartsDesc'    => __( 'Line, bar or pie chart.', 'lessclicks-analytics-for-matomo' ),
+						'flexiblePeriod'           => __( 'Flexible period', 'lessclicks-analytics-for-matomo' ),
+						'flexiblePeriodDesc'       => __( 'Pick any period with the date picker in the widget.', 'lessclicks-analytics-for-matomo' ),
+						'exportReady'              => __( 'PDF & PNG export', 'lessclicks-analytics-for-matomo' ),
+						'exportReadyDesc'          => __( 'Download statistics as a PDF report or PNG image.', 'lessclicks-analytics-for-matomo' ),
+						'supportTitle'             => __( 'Support Matt Interfaces', 'lessclicks-analytics-for-matomo' ),
+						'supportDesc'              => __( 'This plugin is free. A donation or a review helps with further development.', 'lessclicks-analytics-for-matomo' ),
+						'pluginWebsite'            => __( 'Plugin website', 'lessclicks-analytics-for-matomo' ),
+						'pluginWebsiteAria'        => __( 'Visit the Lessclicks Analytics for Matomo plugin page', 'lessclicks-analytics-for-matomo' ),
+						'githubRepository'         => __( 'GitHub repository', 'lessclicks-analytics-for-matomo' ),
+						'githubRepositoryAria'     => __( 'Open the Lessclicks GitHub repository', 'lessclicks-analytics-for-matomo' ),
+						'matomoApiDocs'            => __( 'Matomo API docs', 'lessclicks-analytics-for-matomo' ),
+						'supportDeveloper'         => __( 'Support the developer', 'lessclicks-analytics-for-matomo' ),
 					),
 				)
 			);
@@ -219,36 +270,36 @@ class Dashlytics {
 
 		// Load review notice dismiss helper on every admin page
 		wp_enqueue_script(
-			'dashlytics-admin',
-			DASHLYTICS_PLUGIN_URL . 'assets/js/admin.js',
+			'lessclicks-admin',
+			LESSCLICKS_PLUGIN_URL . 'assets/js/admin.js',
 			array( 'jquery' ),
-			DASHLYTICS_VERSION,
+			LESSCLICKS_VERSION,
 			true
 		);
 
 		wp_localize_script(
-			'dashlytics-admin',
-			'dashlyticsAdminData',
+			'lessclicks-admin',
+			'lessclicksAdminData',
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'dashlytics_admin_nonce' ),
+				'nonce'   => wp_create_nonce( 'lessclicks_admin_nonce' ),
 			)
 		);
 
 		// Dashboard
 		if ( 'index.php' === $hook ) {
 			wp_enqueue_style(
-				'dashlytics-widget',
-				DASHLYTICS_PLUGIN_URL . 'assets/css/widget.css',
+				'lessclicks-widget',
+				LESSCLICKS_PLUGIN_URL . 'assets/css/widget.css',
 				array(),
-				DASHLYTICS_VERSION
+				LESSCLICKS_VERSION
 			);
 
 			wp_enqueue_script(
-				'dashlytics-widget',
-				DASHLYTICS_PLUGIN_URL . 'app/public/build/dashboardwidget.js',
+				'lessclicks-widget',
+				LESSCLICKS_PLUGIN_URL . 'app/public/build/dashboardwidget.js',
 				array(),
-				DASHLYTICS_VERSION,
+				LESSCLICKS_VERSION,
 				true
 			);
 
@@ -261,62 +312,62 @@ class Dashlytics {
 			$site_favicon = $site_icon_id ? wp_get_attachment_image_url( $site_icon_id, 'full' ) : '';
 
 			wp_localize_script(
-				'dashlytics-widget',
-				'dashlyticsWidget',
+				'lessclicks-widget',
+				'lessclicksWidget',
 				array(
-					'restUrl'     => rest_url( 'dashlytics/v1/' ),
+					'restUrl'     => rest_url( 'lessclicks/v1/' ),
 					'nonce'       => wp_create_nonce( 'wp_rest' ),
-					'version'     => DASHLYTICS_VERSION,
+					'version'     => LESSCLICKS_VERSION,
 					'settings'    => $this->get_settings(),
 					'siteTitle'   => get_bloginfo( 'name' ),
 					'siteUrl'     => home_url(),
 					'siteLogo'    => $site_logo,
 					'siteFavicon' => $site_favicon,
-					'pluginUrl'   => DASHLYTICS_PLUGIN_URL,
+					'pluginUrl'   => LESSCLICKS_PLUGIN_URL,
 					'i18n'        => array(
-						'visits'           => __( 'Besuche', 'dashlytics-matomo-analytics-widget' ),
-						'pageviews'        => __( 'Seitenaufrufe', 'dashlytics-matomo-analytics-widget' ),
-						'visitors'         => __( 'Besucher', 'dashlytics-matomo-analytics-widget' ),
-						'bounceRate'       => __( 'Absprungrate', 'dashlytics-matomo-analytics-widget' ),
-						'avgTime'          => __( 'Ø Verweildauer', 'dashlytics-matomo-analytics-widget' ),
-						'loading'          => __( 'Lade Daten...', 'dashlytics-matomo-analytics-widget' ),
-						'noData'           => __( 'Keine Daten verfügbar', 'dashlytics-matomo-analytics-widget' ),
-						'error'            => __( 'Fehler beim Laden', 'dashlytics-matomo-analytics-widget' ),
-						'configure'        => __( 'Bitte konfigurieren Sie das Plugin', 'dashlytics-matomo-analytics-widget' ),
-						'osFamilies'       => __( 'OS-Familien', 'dashlytics-matomo-analytics-widget' ),
-						'line'             => __( 'Liniendiagramm', 'dashlytics-matomo-analytics-widget' ),
-						'bar'              => __( 'Balkendiagramm', 'dashlytics-matomo-analytics-widget' ),
-						'pie'              => __( 'Kreisdiagramm', 'dashlytics-matomo-analytics-widget' ),
-						'from'             => __( 'Von', 'dashlytics-matomo-analytics-widget' ),
-						'to'               => __( 'Bis', 'dashlytics-matomo-analytics-widget' ),
-						'changeColor'      => __( 'Farbe ändern', 'dashlytics-matomo-analytics-widget' ),
-						'refresh'          => __( 'Aktualisieren', 'dashlytics-matomo-analytics-widget' ),
-						'ariaRefresh'      => __( 'Statistiken aktualisieren', 'dashlytics-matomo-analytics-widget' ),
-						'minimize'         => __( 'Minimieren', 'dashlytics-matomo-analytics-widget' ),
-						'ariaMinimize'     => __( 'Ansicht minimieren', 'dashlytics-matomo-analytics-widget' ),
-						'expand'           => __( 'Erweitern', 'dashlytics-matomo-analytics-widget' ),
-						'retry'            => __( 'Erneut versuchen', 'dashlytics-matomo-analytics-widget' ),
-						'report'           => __( 'Report', 'dashlytics-matomo-analytics-widget' ),
-						'pdfReport'        => __( 'PDF Report', 'dashlytics-matomo-analytics-widget' ),
-						'fullReport'       => __( 'Vollständiger Bericht', 'dashlytics-matomo-analytics-widget' ),
-						'pngImage'         => __( 'PNG Bild', 'dashlytics-matomo-analytics-widget' ),
-						'chartOnly'        => __( 'Nur das Diagramm', 'dashlytics-matomo-analytics-widget' ),
-						'statistics'       => __( 'BESUCHERSTATISTIK', 'dashlytics-matomo-analytics-widget' ),
-						'period'           => __( 'Analysezeitraum', 'dashlytics-matomo-analytics-widget' ),
-						'avgPerDay'        => __( 'Ø Besuche/Tag', 'dashlytics-matomo-analytics-widget' ),
-						'actionsPerVisit'  => __( 'Aktionen/Besuch', 'dashlytics-matomo-analytics-widget' ),
-						'bestDay'          => __( 'Bester Tag', 'dashlytics-matomo-analytics-widget' ),
-						'days'             => __( 'Tage', 'dashlytics-matomo-analytics-widget' ),
-						'overview'         => __( 'ÜBERSICHT', 'dashlytics-matomo-analytics-widget' ),
-						'detailAnalysis'   => __( 'DETAILANALYSE', 'dashlytics-matomo-analytics-widget' ),
-						'analyticsLabel'   => __( 'ANALYTICS', 'dashlytics-matomo-analytics-widget' ),
-						'reportLabel'      => __( 'REPORT', 'dashlytics-matomo-analytics-widget' ),
-						'generatedOn'      => __( 'Generiert am', 'dashlytics-matomo-analytics-widget' ),
-						'poweredBy'        => __( 'Powered by Dashlytics', 'dashlytics-matomo-analytics-widget' ),
-						'poweredByCompany' => __( 'Powered by', 'dashlytics-matomo-analytics-widget' ),
-						'pdfError'         => __( 'Fehler beim Erstellen des PDF-Reports', 'dashlytics-matomo-analytics-widget' ),
-						'pngError'         => __( 'Fehler beim Erstellen des PNG-Bildes', 'dashlytics-matomo-analytics-widget' ),
-						'chartPreparing'   => __( 'Chart wird aufbereitet...', 'dashlytics-matomo-analytics-widget' ),
+						'visits'           => __( 'Besuche', 'lessclicks-analytics-for-matomo' ),
+						'pageviews'        => __( 'Seitenaufrufe', 'lessclicks-analytics-for-matomo' ),
+						'visitors'         => __( 'Besucher', 'lessclicks-analytics-for-matomo' ),
+						'bounceRate'       => __( 'Absprungrate', 'lessclicks-analytics-for-matomo' ),
+						'avgTime'          => __( 'Ø Verweildauer', 'lessclicks-analytics-for-matomo' ),
+						'loading'          => __( 'Lade Daten...', 'lessclicks-analytics-for-matomo' ),
+						'noData'           => __( 'Keine Daten verfügbar', 'lessclicks-analytics-for-matomo' ),
+						'error'            => __( 'Fehler beim Laden', 'lessclicks-analytics-for-matomo' ),
+						'configure'        => __( 'Bitte konfigurieren Sie das Plugin', 'lessclicks-analytics-for-matomo' ),
+						'osFamilies'       => __( 'OS-Familien', 'lessclicks-analytics-for-matomo' ),
+						'line'             => __( 'Liniendiagramm', 'lessclicks-analytics-for-matomo' ),
+						'bar'              => __( 'Balkendiagramm', 'lessclicks-analytics-for-matomo' ),
+						'pie'              => __( 'Kreisdiagramm', 'lessclicks-analytics-for-matomo' ),
+						'from'             => __( 'Von', 'lessclicks-analytics-for-matomo' ),
+						'to'               => __( 'Bis', 'lessclicks-analytics-for-matomo' ),
+						'changeColor'      => __( 'Farbe ändern', 'lessclicks-analytics-for-matomo' ),
+						'refresh'          => __( 'Aktualisieren', 'lessclicks-analytics-for-matomo' ),
+						'ariaRefresh'      => __( 'Statistiken aktualisieren', 'lessclicks-analytics-for-matomo' ),
+						'minimize'         => __( 'Minimieren', 'lessclicks-analytics-for-matomo' ),
+						'ariaMinimize'     => __( 'Ansicht minimieren', 'lessclicks-analytics-for-matomo' ),
+						'expand'           => __( 'Erweitern', 'lessclicks-analytics-for-matomo' ),
+						'retry'            => __( 'Erneut versuchen', 'lessclicks-analytics-for-matomo' ),
+						'report'           => __( 'Report', 'lessclicks-analytics-for-matomo' ),
+						'pdfReport'        => __( 'PDF Report', 'lessclicks-analytics-for-matomo' ),
+						'fullReport'       => __( 'Vollständiger Bericht', 'lessclicks-analytics-for-matomo' ),
+						'pngImage'         => __( 'PNG Bild', 'lessclicks-analytics-for-matomo' ),
+						'chartOnly'        => __( 'Nur das Diagramm', 'lessclicks-analytics-for-matomo' ),
+						'statistics'       => __( 'BESUCHERSTATISTIK', 'lessclicks-analytics-for-matomo' ),
+						'period'           => __( 'Analysezeitraum', 'lessclicks-analytics-for-matomo' ),
+						'avgPerDay'        => __( 'Ø Besuche/Tag', 'lessclicks-analytics-for-matomo' ),
+						'actionsPerVisit'  => __( 'Aktionen/Besuch', 'lessclicks-analytics-for-matomo' ),
+						'bestDay'          => __( 'Bester Tag', 'lessclicks-analytics-for-matomo' ),
+						'days'             => __( 'Tage', 'lessclicks-analytics-for-matomo' ),
+						'overview'         => __( 'ÜBERSICHT', 'lessclicks-analytics-for-matomo' ),
+						'detailAnalysis'   => __( 'DETAILANALYSE', 'lessclicks-analytics-for-matomo' ),
+						'analyticsLabel'   => __( 'ANALYTICS', 'lessclicks-analytics-for-matomo' ),
+						'reportLabel'      => __( 'REPORT', 'lessclicks-analytics-for-matomo' ),
+						'generatedOn'      => __( 'Generiert am', 'lessclicks-analytics-for-matomo' ),
+						'poweredBy'        => __( 'Powered by Lessclicks', 'lessclicks-analytics-for-matomo' ),
+						'poweredByCompany' => __( 'Powered by', 'lessclicks-analytics-for-matomo' ),
+						'pdfError'         => __( 'Fehler beim Erstellen des PDF-Reports', 'lessclicks-analytics-for-matomo' ),
+						'pngError'         => __( 'Fehler beim Erstellen des PNG-Bildes', 'lessclicks-analytics-for-matomo' ),
+						'chartPreparing'   => __( 'Chart wird aufbereitet...', 'lessclicks-analytics-for-matomo' ),
 					),
 				)
 			);
@@ -371,7 +422,17 @@ class Dashlytics {
 			'auto_detect_matomo' => true,
 		);
 
-		$settings = get_option( self::OPTION_NAME, $defaults );
+		$settings = get_option( self::OPTION_NAME );
+
+		// Carry over settings saved under the previous plugin name.
+		if ( false === $settings ) {
+			$legacy = get_option( self::LEGACY_OPTION_NAME );
+			if ( false !== $legacy ) {
+				$settings = $legacy;
+				update_option( self::OPTION_NAME, $legacy );
+			}
+		}
+
 		return wp_parse_args( $settings, $defaults );
 	}
 
@@ -381,7 +442,7 @@ class Dashlytics {
 	public function register_rest_routes() {
 		// Settings Route
 		register_rest_route(
-			'dashlytics/v1',
+			'lessclicks/v1',
 			'/settings',
 			array(
 				array(
@@ -399,7 +460,7 @@ class Dashlytics {
 
 		// Analytics Data Route
 		register_rest_route(
-			'dashlytics/v1',
+			'lessclicks/v1',
 			'/analytics',
 			array(
 				'methods'             => WP_REST_Server::READABLE,
@@ -420,7 +481,7 @@ class Dashlytics {
 
 		// Device/OS data for pie charts
 		register_rest_route(
-			'dashlytics/v1',
+			'lessclicks/v1',
 			'/devices',
 			array(
 				'methods'             => WP_REST_Server::READABLE,
@@ -437,7 +498,7 @@ class Dashlytics {
 
 		// Connection Test Route
 		register_rest_route(
-			'dashlytics/v1',
+			'lessclicks/v1',
 			'/test-connection',
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
@@ -448,7 +509,7 @@ class Dashlytics {
 
 		// Auto-detect token route
 		register_rest_route(
-			'dashlytics/v1',
+			'lessclicks/v1',
 			'/detect-token',
 			array(
 				'methods'             => WP_REST_Server::READABLE,
@@ -466,10 +527,12 @@ class Dashlytics {
 	}
 
 	/**
-	 * Permission check for dashboard view
+	 * Permission check for dashboard view.
+	 *
+	 * Analytics data is only exposed to users who can manage the plugin.
 	 */
 	public function check_view_permission() {
-		return current_user_can( 'read' );
+		return current_user_can( 'manage_options' );
 	}
 
 	/**
@@ -529,7 +592,7 @@ class Dashlytics {
 		return rest_ensure_response(
 			array(
 				'success' => true,
-				'message' => __( 'Einstellungen gespeichert', 'dashlytics-matomo-analytics-widget' ),
+				'message' => __( 'Settings saved.', 'lessclicks-analytics-for-matomo' ),
 			)
 		);
 	}
@@ -549,7 +612,7 @@ class Dashlytics {
 
 			return new WP_Error(
 				'not_configured',
-				__( 'Dashlytics ist noch nicht konfiguriert.', 'dashlytics-matomo-analytics-widget' ),
+				__( 'Lessclicks is not configured yet.', 'lessclicks-analytics-for-matomo' ),
 				array( 'status' => 400 )
 			);
 		}
@@ -635,7 +698,7 @@ class Dashlytics {
 				if ( empty( $site_id ) ) {
 					return new WP_Error(
 						'no_site_id',
-						__( 'Keine Matomo Site ID gefunden.', 'dashlytics-matomo-analytics-widget' ),
+						__( 'No Matomo Site ID found.', 'lessclicks-analytics-for-matomo' ),
 						array( 'status' => 400 )
 					);
 				}
@@ -715,7 +778,7 @@ class Dashlytics {
 		// Matomo not available
 		return new WP_Error(
 			'matomo_not_available',
-			__( 'Matomo for WordPress ist nicht korrekt konfiguriert.', 'dashlytics-matomo-analytics-widget' ),
+			__( 'Matomo for WordPress is not configured correctly.', 'lessclicks-analytics-for-matomo' ),
 			array( 'status' => 400 )
 		);
 	}
@@ -734,7 +797,7 @@ class Dashlytics {
 
 			return new WP_Error(
 				'not_configured',
-				__( 'Dashlytics ist noch nicht konfiguriert.', 'dashlytics-matomo-analytics-widget' ),
+				__( 'Lessclicks is not configured yet.', 'lessclicks-analytics-for-matomo' ),
 				array( 'status' => 400 )
 			);
 		}
@@ -803,7 +866,7 @@ class Dashlytics {
 				if ( empty( $site_id ) ) {
 					return new WP_Error(
 						'no_site_id',
-						__( 'Keine Matomo Site ID gefunden.', 'dashlytics-matomo-analytics-widget' ),
+						__( 'No Matomo Site ID found.', 'lessclicks-analytics-for-matomo' ),
 						array( 'status' => 400 )
 					);
 				}
@@ -830,7 +893,7 @@ class Dashlytics {
 
 		return new WP_Error(
 			'matomo_not_available',
-			__( 'Matomo for WordPress ist nicht korrekt konfiguriert.', 'dashlytics-matomo-analytics-widget' ),
+			__( 'Matomo for WordPress is not configured correctly.', 'lessclicks-analytics-for-matomo' ),
 			array( 'status' => 400 )
 		);
 	}
@@ -928,7 +991,7 @@ class Dashlytics {
 						return rest_ensure_response(
 							array(
 								'success' => true,
-								'message' => __( 'Matomo for WordPress verbunden.', 'dashlytics-matomo-analytics-widget' ),
+								'message' => __( 'Connected to Matomo for WordPress.', 'lessclicks-analytics-for-matomo' ),
 							)
 						);
 					}
@@ -945,7 +1008,7 @@ class Dashlytics {
 		if ( empty( $matomo_url ) || empty( $token_auth ) ) {
 			return new WP_Error(
 				'missing_params',
-				__( 'URL und Token sind erforderlich.', 'dashlytics-matomo-analytics-widget' ),
+				__( 'URL and token are required.', 'lessclicks-analytics-for-matomo' ),
 				array( 'status' => 400 )
 			);
 		}
@@ -993,7 +1056,7 @@ class Dashlytics {
 				array(
 					'success' => true,
 					/* translators: %s: Matomo version number */
-					'message' => sprintf( __( 'Verbunden mit Matomo %s', 'dashlytics-matomo-analytics-widget' ), $data['value'] ),
+					'message' => sprintf( __( 'Connected to Matomo %s', 'lessclicks-analytics-for-matomo' ), $data['value'] ),
 					'version' => $data['value'],
 				)
 			);
@@ -1002,7 +1065,7 @@ class Dashlytics {
 		return rest_ensure_response(
 			array(
 				'success' => false,
-				'message' => __( 'Unbekannte Antwort von Matomo', 'dashlytics-matomo-analytics-widget' ),
+				'message' => __( 'Unknown response from Matomo.', 'lessclicks-analytics-for-matomo' ),
 			)
 		);
 	}
@@ -1021,7 +1084,7 @@ class Dashlytics {
 			return rest_ensure_response(
 				array(
 					'success' => false,
-					'message' => __( 'Matomo for WordPress ist nicht installiert.', 'dashlytics-matomo-analytics-widget' ),
+					'message' => __( 'Matomo for WordPress is not installed.', 'lessclicks-analytics-for-matomo' ),
 				)
 			);
 		}
@@ -1034,7 +1097,7 @@ class Dashlytics {
 				array(
 					'success' => true,
 					'token'   => $matomo_settings['token_auth'],
-					'message' => __( 'Token automatisch erkannt!', 'dashlytics-matomo-analytics-widget' ),
+					'message' => __( 'Token detected automatically.', 'lessclicks-analytics-for-matomo' ),
 				)
 			);
 		}
@@ -1047,7 +1110,7 @@ class Dashlytics {
 				return rest_ensure_response(
 					array(
 						'success'     => true,
-						'message'     => __( 'Bitte nutzen Sie die Matomo REST API ohne Token.', 'dashlytics-matomo-analytics-widget' ),
+						'message'     => __( 'Use the Matomo REST API without a token.', 'lessclicks-analytics-for-matomo' ),
 						'use_wp_auth' => true,
 					)
 				);
@@ -1058,7 +1121,7 @@ class Dashlytics {
 		return rest_ensure_response(
 			array(
 				'success' => false,
-				'message' => __( 'Token konnte nicht automatisch erkannt werden.', 'dashlytics-matomo-analytics-widget' ),
+				'message' => __( 'The token could not be detected automatically.', 'lessclicks-analytics-for-matomo' ),
 			)
 		);
 	}
@@ -1067,9 +1130,13 @@ class Dashlytics {
 	 * Add dashboard widget
 	 */
 	public function add_dashboard_widget() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		wp_add_dashboard_widget(
-			'dashlytics_widget',
-			__( 'Dashlytics - Website Statistiken', 'dashlytics-matomo-analytics-widget' ),
+			'lessclicks_widget',
+			__( 'Lessclicks - Website statistics', 'lessclicks-analytics-for-matomo' ),
 			array( $this, 'render_dashboard_widget' ),
 			null,
 			null,
@@ -1086,16 +1153,16 @@ class Dashlytics {
 		$matomo   = $this->detect_matomo_plugin();
 
 		if ( empty( $settings['matomo_url'] ) && empty( $settings['token_auth'] ) && ! $matomo['installed'] ) {
-			echo '<div class="dashlytics-setup-notice">';
-			echo '<p>' . esc_html__( 'Willkommen bei Dashlytics! Bitte konfigurieren Sie das Plugin.', 'dashlytics-matomo-analytics-widget' ) . '</p>';
-			echo '<a href="' . esc_url( admin_url( 'admin.php?page=dashlytics' ) ) . '" class="button button-primary">';
-			echo esc_html__( 'Jetzt einrichten', 'dashlytics-matomo-analytics-widget' );
+			echo '<div class="lessclicks-setup-notice">';
+			echo '<p>' . esc_html__( 'Welcome to Lessclicks. Please configure the plugin.', 'lessclicks-analytics-for-matomo' ) . '</p>';
+			echo '<a href="' . esc_url( admin_url( 'admin.php?page=lessclicks' ) ) . '" class="button button-primary">';
+			echo esc_html__( 'Set up now', 'lessclicks-analytics-for-matomo' );
 			echo '</a>';
 			echo '</div>';
 			return;
 		}
 
-		echo '<div id="dashlytics-widget"></div>';
+		echo '<div id="lessclicks-widget"></div>';
 	}
 
 	/**
@@ -1103,8 +1170,8 @@ class Dashlytics {
 	 */
 	public function render_settings_page() {
 		?>
-		<div class="wrap dashlytics-wrap">
-			<div id="dashlytics-settings"></div>
+		<div class="wrap lessclicks-wrap">
+			<div id="lessclicks-settings"></div>
 		</div>
 		<?php
 	}
@@ -1118,7 +1185,7 @@ class Dashlytics {
 
 		if ( $is_de ) {
 			return array(
-				'notice_title'  => 'Gefällt Ihnen Dashlytics?',
+				'notice_title'  => 'Gefällt Ihnen Lessclicks?',
 				'notice_text'   => 'Dieses Plugin ist zu 100 % kostenlos. Eine Spende oder positive Bewertung hilft uns enorm, es weiterzuentwickeln.',
 				'btn_donate'    => '☕ Spenden',
 				'btn_rate'      => '⭐ Bewerten',
@@ -1128,7 +1195,7 @@ class Dashlytics {
 		}
 
 		return array(
-			'notice_title'  => 'Enjoying Dashlytics?',
+			'notice_title'  => 'Enjoying Lessclicks?',
 			'notice_text'   => 'This plugin is 100% free. A donation or positive review helps us keep improving it.',
 			'btn_donate'    => '☕ Donate',
 			'btn_rate'      => '⭐ Rate it',
@@ -1147,28 +1214,28 @@ class Dashlytics {
 
 		// Do not show on the plugin settings page
 		$screen = get_current_screen();
-		if ( $screen && 'toplevel_page_dashlytics' === $screen->id ) {
+		if ( $screen && 'toplevel_page_lessclicks' === $screen->id ) {
 			return;
 		}
 
-		$dismissed = get_option( 'dashlytics_review_dismissed', false );
+		$dismissed = get_option( 'lessclicks_review_dismissed', false );
 		if ( $dismissed ) {
 			return;
 		}
 
-		$next = get_option( 'dashlytics_review_next', 0 );
+		$next = get_option( 'lessclicks_review_next', 0 );
 		if ( time() < (int) $next ) {
 			return;
 		}
 
 		$texts       = $this->get_promo_texts();
 		$donate      = 'https://matt-interfaces.ch/zahlen';
-		$rate        = 'https://wordpress.org/support/plugin/dashlytics-matomo-analytics-widget/reviews/#new-post';
-		$snooze_url  = wp_nonce_url( add_query_arg( 'dashlytics_review_action', 'snooze' ), 'dashlytics_review_action' );
-		$dismiss_url = wp_nonce_url( add_query_arg( 'dashlytics_review_action', 'dismiss' ), 'dashlytics_review_action' );
+		$rate        = 'https://wordpress.org/support/plugin/lessclicks-analytics-for-matomo/reviews/#new-post';
+		$snooze_url  = wp_nonce_url( add_query_arg( 'lessclicks_review_action', 'snooze' ), 'lessclicks_review_action' );
+		$dismiss_url = wp_nonce_url( add_query_arg( 'lessclicks_review_action', 'dismiss' ), 'lessclicks_review_action' );
 		?>
-		<div class="notice notice-info is-dismissible dashlytics-review-notice">
-			<p class="dashlytics-review-notice__title"><strong><?php echo esc_html( $texts['notice_title'] ); ?></strong></p>
+		<div class="notice notice-info is-dismissible lessclicks-review-notice">
+			<p class="lessclicks-review-notice__title"><strong><?php echo esc_html( $texts['notice_title'] ); ?></strong></p>
 			<p><?php echo esc_html( $texts['notice_text'] ); ?></p>
 			<p>
 				<a href="<?php echo esc_url( $donate ); ?>" target="_blank" rel="noopener noreferrer" class="button button-primary"><?php echo esc_html( $texts['btn_donate'] ); ?></a>
@@ -1184,13 +1251,13 @@ class Dashlytics {
 	 * AJAX: Review Notice per WordPress-X-Button snoozen
 	 */
 	public function ajax_review_snooze() {
-		check_ajax_referer( 'dashlytics_admin_nonce', 'nonce' );
+		check_ajax_referer( 'lessclicks_admin_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error();
 		}
 
-		update_option( 'dashlytics_review_next', time() + ( 14 * DAY_IN_SECONDS ) );
+		update_option( 'lessclicks_review_next', time() + ( 14 * DAY_IN_SECONDS ) );
 		wp_send_json_success();
 	}
 
@@ -1198,21 +1265,21 @@ class Dashlytics {
 	 * Snooze or permanently close review notice
 	 */
 	public function snooze_review_notice() {
-		if ( ! isset( $_GET['dashlytics_review_action'] ) || ! current_user_can( 'manage_options' ) ) {
+		if ( ! isset( $_GET['lessclicks_review_action'] ) || ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
-		check_admin_referer( 'dashlytics_review_action' );
+		check_admin_referer( 'lessclicks_review_action' );
 
-		$action = sanitize_text_field( wp_unslash( $_GET['dashlytics_review_action'] ) );
+		$action = sanitize_text_field( wp_unslash( $_GET['lessclicks_review_action'] ) );
 
 		// "Don't show again" clicked -> permanently remove.
 		// "Remind me in 14 days" is handled as a link; the X icon uses AJAX.
 		if ( 'dismiss' === $action ) {
-			update_option( 'dashlytics_review_dismissed', true );
+			update_option( 'lessclicks_review_dismissed', true );
 		}
 
-		wp_safe_redirect( remove_query_arg( array( 'dashlytics_review_action', '_wpnonce' ) ) );
+		wp_safe_redirect( remove_query_arg( array( 'lessclicks_review_action', '_wpnonce' ) ) );
 		exit;
 	}
 }

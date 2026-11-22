@@ -1,5 +1,5 @@
 /**
- * Dashlytics Widget Styles
+ * Lessclicks Widget Styles
  * Modern dashboard widget for WordPress
  */
 
@@ -558,12 +558,12 @@
 }
 
 /* Setup Notice */
-.dashlytics-setup-notice {
+.lessclicks-setup-notice {
     padding: 20px;
     text-align: center;
 }
 
-.dashlytics-setup-notice p {
+.lessclicks-setup-notice p {
     margin: 0 0 15px;
     color: #64748b;
 }

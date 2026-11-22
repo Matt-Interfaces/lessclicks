@@ -1,14 +1,14 @@
-# Dashlytics Settings-Page Refactor
+# Lessclicks Settings-Page Refactor
 
 ## Schritt 1: CSS-Grundlage konsolidieren
 - [x] Admin-CSS für Inputs/Selects prüfen
-- [x] Alert-Top-Spacing-Klasse `.dashlytics-alert--inline` hinzugefügt
+- [x] Alert-Top-Spacing-Klasse `.lessclicks-alert--inline` hinzugefügt
 - [x] Ungenutzte CSS-Regeln entfernt (KPI-Preview-Bar in admin.css, KPI-Metric-Cards in Svelte)
 - [x] Color-Picker auf 44 px Höhe + gleichen Border/Border-Radius wie Inputs abgestimmt
 
 ## Schritt 2: Wiederverwendbare Svelte-Komponente
-- [x] `app/components/DashlyticsInput.svelte` erstellt
-- [x] In `DashlyticsSettings.svelte` importiert und für URL/Site-ID genutzt
+- [x] `app/components/LessclicksInput.svelte` erstellt
+- [x] In `LessclicksSettings.svelte` importiert und für URL/Site-ID genutzt
 
 ## Schritt 3: Tabs zusammenlegen + KPI-Vorschau entfernen
 - [x] `activeTab` Default auf `'settings'` geändert

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="Dashlytics">
-    <description>WordPress Coding Standards für Dashlytics</description>
+<ruleset name="Lessclicks">
+    <description>WordPress Coding Standards für Lessclicks</description>
 
     <!-- Alle PHP-Dateien im Plugin-Root prüfen -->
     <file>.</file>
@@ -20,7 +20,7 @@
     <!-- Output Escaping erzwingen (XSS-Relevanz) -->
     <rule ref="WordPress.Security.EscapeOutput">
         <properties>
-            <property name="customAutoEscapedFunctions" value="dashlytics_widget_data" />
+            <property name="customAutoEscapedFunctions" value="lessclicks_widget_data" />
         </properties>
     </rule>
 
